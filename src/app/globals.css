@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+:root {
+  --miel-crema: #eceadb;
+  --miel-crema-alta: #e5e3d4;
+  --miel-marron: #895d39;
+  --miel-boton: #f0b41be5;
+  --miel-boton-oscuro: #c68d0c;
+  --miel-dorado: #f0b41be5;
+  --miel-dorado-oscuro: #a3721c;
+  --miel-oliva: #3d4a34;
+  --miel-oliva-claro: #59684a;
+  --miel-ciruela: #5b2a3b;
+  --miel-ciruela-oscuro: #431e2b;
+  --miel-tinta: #2b2420;
+  --miel-linea: #ddceac;
+}
+
+@theme inline {
+  --color-crema: var(--miel-crema);
+  --color-crema-alta: var(--miel-crema-alta);
+  --color-marron: var(--miel-marron);
+  --color-boton: var(--miel-boton);
+  --color-boton-oscuro: var(--miel-boton-oscuro);
+  --color-dorado: var(--miel-dorado);
+  --color-dorado-oscuro: var(--miel-dorado-oscuro);
+  --color-oliva: var(--miel-oliva);
+  --color-oliva-claro: var(--miel-oliva-claro);
+  --color-ciruela: var(--miel-ciruela);
+  --color-ciruela-oscuro: var(--miel-ciruela-oscuro);
+  --color-tinta: var(--miel-tinta);
+  --color-linea: var(--miel-linea);
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--miel-crema);
+  color: var(--miel-tinta);
+}
+
+::selection {
+  background: var(--miel-dorado);
+  color: var(--miel-crema-alta);
+}
+
+/* Línea ondulada tipo etiqueta de conserva, usada como separador de secciones */
+.borde-tela {
+  position: relative;
+}
+.borde-tela::after {
+  content: "";
+  display: block;
+  height: 10px;
+  width: 100%;
+  background-image: radial-gradient(
+    circle at 10px 0,
+    transparent 9px,
+    var(--miel-crema) 10px
+  );
+  background-size: 20px 10px;
+  background-repeat: repeat-x;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animar-entrada {
+    animation: entrada 0.5s ease-out both;
+  }
+}
+
+@keyframes entrada {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .carrusel-pista {
+    animation: deslizar-fotos 25s linear infinite;
+  }
+
+  .carrusel-marco:hover .carrusel-pista,
+  .carrusel-marco:focus-within .carrusel-pista {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes deslizar-fotos {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
