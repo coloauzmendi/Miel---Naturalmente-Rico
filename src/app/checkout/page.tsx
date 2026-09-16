@@ -104,6 +104,18 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-3xl px-5 py-14">
       <h1 className="font-display text-3xl text-tinta">Finalizar compra</h1>
 
+      <div className="mb-6 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-marron">
+        <span className="rounded-full bg-marron px-2.5 py-1 text-crema-alta">
+          1
+        </span>
+        Datos de entrega
+        <span className="h-px w-8 bg-linea" />
+        <span className="rounded-full border border-linea px-2.5 py-1 text-tinta/50">
+          2
+        </span>
+        Pago
+      </div>
+
       <div className="mt-8 grid gap-10 md:grid-cols-[1.3fr_1fr]">
         <div className="flex flex-col gap-4">
           <label className="text-sm font-medium text-tinta">
@@ -112,7 +124,7 @@ export default function CheckoutPage() {
               value={direccion}
               onChange={(e) => setDireccion(e.target.value)}
               placeholder="Calle, número, barrio, ciudad"
-              className="mt-1 w-full rounded-lg border border-linea bg-crema-alta px-3 py-2 text-sm outline-none focus:border-oliva"
+              className="mt-1 min-h-12 w-full rounded-lg border border-linea bg-crema-alta px-3 py-2 text-sm outline-none focus:border-oliva"
             />
           </label>
 
@@ -122,7 +134,7 @@ export default function CheckoutPage() {
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
               placeholder="341 000-0000"
-              className="mt-1 w-full rounded-lg border border-linea bg-crema-alta px-3 py-2 text-sm outline-none focus:border-oliva"
+              className="mt-1 min-h-12 w-full rounded-lg border border-linea bg-crema-alta px-3 py-2 text-sm outline-none focus:border-oliva"
             />
           </label>
 
@@ -150,7 +162,7 @@ export default function CheckoutPage() {
           </button>
         </div>
 
-        <div className="h-fit rounded-2xl border border-linea bg-crema-alta p-5">
+        <div className="h-fit rounded-2xl border border-linea bg-crema-alta p-5 md:sticky md:top-24">
           <p className="mb-3 font-medium text-tinta">Resumen del pedido</p>
           <div className="flex flex-col gap-2 text-sm">
             {items.map((i) => (

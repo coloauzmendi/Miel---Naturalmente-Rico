@@ -33,7 +33,10 @@ export default function CarritoPage() {
 
       <div className="mt-8 divide-y divide-linea border-y border-linea">
         {items.map(({ producto, cantidad }) => (
-          <div key={producto.id} className="flex items-center gap-4 py-5">
+          <div
+            key={producto.id}
+            className="flex flex-wrap items-center gap-3 py-5 sm:flex-nowrap sm:gap-4"
+          >
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-linea bg-crema-alta">
               {producto.imagen_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -49,7 +52,7 @@ export default function CarritoPage() {
               )}
             </div>
 
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <Link
                 href={`/productos/${producto.id}`}
                 className="font-medium text-tinta"
@@ -61,7 +64,7 @@ export default function CarritoPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 rounded-full border border-linea px-2.5 py-1.5">
+            <div className="ml-[5.5rem] flex items-center gap-3 rounded-full border border-linea px-2.5 py-1.5 sm:ml-0">
               <button
                 onClick={() => actualizarCantidad(producto.id, cantidad - 1)}
                 aria-label="Restar"
@@ -79,7 +82,7 @@ export default function CarritoPage() {
               </button>
             </div>
 
-            <p className="w-24 text-right font-medium text-tinta">
+            <p className="ml-auto w-auto text-right font-medium text-tinta sm:w-24">
               {formatearPrecio(producto.precio * cantidad)}
             </p>
 
