@@ -129,7 +129,7 @@ export default async function Home() {
               {
                 icon: House,
                 titulo: "Recibís",
-                texto: "Coordinamos la entrega en Carcarañá y alrededores.",
+                texto: "Coordinamos la entrega.",
               },
             ].map(({ icon: Icono, titulo, texto }, indice) => (
               <div
@@ -160,8 +160,7 @@ export default async function Home() {
           <div className="mt-5 flex items-start gap-3 rounded-xl bg-marron/10 p-4 text-sm text-tinta/75">
             <Clock3 className="mt-0.5 shrink-0 text-marron" size={18} />
             <p>
-              Pedidos y entregas se coordinan por WhatsApp según disponibilidad
-              de la semana.
+              Pedidos y entregas se coordinan por WhatsApp según disponibilidad.
             </p>
           </div>
         </div>

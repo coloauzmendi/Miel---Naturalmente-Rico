@@ -6,9 +6,7 @@ import styles from "./StoryCarousel.module.css";
 import tartas from "@/img/carrusel-tartas.jpeg";
 import pizza from "@/img/carrusel-pizzas.jpeg";
 import malfattis from "@/img/carrusel-malfattis.jpeg";
-import pancakes from "@/img/carrusel-frutos-rojos.jpeg";
-import pancakes2 from "@/img/carrusel-chocochips.jpeg";
-import pancakes3 from "@/img/carrusel-pancakes-bananachip.jpeg";
+import pancakes from "@/img/carrusel-pancakes.jpeg";
 import muffins from "@/img/carrusel-muffins.jpeg";
 import panes from "@/img/carrusel-panes.jpeg";
 import mermeladas from "@/img/carrusel-mermeladas.jpeg";
@@ -25,59 +23,49 @@ const historias: Historia[] = [
   {
     titulo: "Tartas integrales individuales",
     texto:
-      "Acelga, caprese, choclo, cebolla y queso, cebolla y roquefort, jamón y queso",
+      "Prácticas, ricas y nutritivas.\nListas en 5 minutos.",
     imagen: tartas,
   },
   {
     titulo: "Pizza de masa integral",
     texto:
-      "Muzzarella, muzzarella y jamón, muzzarella y choclo, muzzarella y roquefort",
+      "Del freezer al plato en 10 minutos.",
     imagen: pizza,
   },
   {
     titulo: "Malfattis",
-    texto: "Ricota y acelga. 10 unidades",
+    texto: "Livianos, proteicos, riquísimos.\nRicota y acelga.",
     imagen: malfattis,
   },
   {
-    titulo: "Pancakes harina integral + harina de almendras",
-    texto: "Banana, frutos rojos, clásico con nuez",
+    titulo: "Pancakes",
+    texto: "Nuestro producto estrella.\nVariedad de sabores, todos únicos.",
     imagen: pancakes,
-  },
-  {
-    titulo: "Pancakes harina de avena + harina de almendras",
-    texto: "Choco Chips",
-    imagen: pancakes2,
-  },
-  {
-    titulo: "Pancakes 100% harina de almendras",
-    texto: "Manzana, banana con chips o una opción salada con queso y quinoa.",
-    imagen: pancakes3,
   },
   {
     titulo: "Muffins",
     texto:
-      "Carrot cake (harina integral y de almendras) o cítricos (100% harina de almendras)",
+      "Carrot y cítricos.\nHúmedos, frescos, crocantes.",
     imagen: muffins,
   },
   {
     titulo: "Pan integral",
-    texto: "100% harina integral",
+    texto: "100% a base de harina integral.\nCongelado y fraccionado.",
     imagen: panes,
   },
   {
     titulo: "Mermelada de estación",
-    texto: "Naranja o frutilla",
+    texto: "Mas de 24hs de preparación.\nEl aliado de tus meriendas.",
     imagen: mermeladas,
   },
   {
-    titulo: "Granola x300g",
-    texto: "Natural, pasta de maní y chocolate, chocolate, arándanos y coco",
+    titulo: "Granola",
+    texto: "Acompañando desayunos y meriendas.",
     imagen: granolas,
   },
   {
     titulo: "Waffles belgas",
-    texto: "Vainilla, nuez, pasas, cacao + chips, coco, salados",
+    texto: "Extremadamente versátil y rico.\nMiles de opciones para acompañarlos.",
     imagen: waffles,
   },
 ];
