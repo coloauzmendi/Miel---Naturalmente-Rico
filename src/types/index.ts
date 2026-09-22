@@ -1,4 +1,4 @@
-export type Categoria = "cocidos" | "congelados";
+export type Categoria = "almuerzos-cenas" | "desayunos-meriendas";
 
 export interface Producto {
   id: string;

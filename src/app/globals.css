@@ -222,3 +222,17 @@ body {
 .hero-foto:hover {
   transform: rotate(0deg) scale(1.5);
 }
+
+
+@keyframes marquee-infinito {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animacion-marquee {
+  animation: marquee-infinito 30s linear infinite;
+}

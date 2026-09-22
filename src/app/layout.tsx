@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CarritoProvider } from "@/components/CarritoContext";
 import CarritoFlotante from "@/components/CarritoFlotante";
+import Marquee from "@/components/Marquee";
 
 export const metadata: Metadata = {
   title: "Miel, naturalmente rico | Comida casera cocida y congelada",
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col font-sans">
         <CarritoProvider>
           <Navbar />
+          <Marquee />
           <main className="flex-1">{children}</main>
           <Footer />
           <CarritoFlotante />

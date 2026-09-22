@@ -19,7 +19,6 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
         className="block aspect-[4/3] overflow-hidden bg-linea/60"
       >
         {producto.imagen_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={producto.imagen_url}
             alt={producto.nombre}

@@ -67,7 +67,7 @@ export default async function Home() {
 
       <section
         id="historias-productos"
-        className="overflow-hidden bg-crema-alta px-5 pb-10 pt-32 md:hidden"
+        className="overflow-hidden bg-crema-alta px-5 pb-10 pt-28 md:hidden"
       >
         <StoryCarousel />
       </section>

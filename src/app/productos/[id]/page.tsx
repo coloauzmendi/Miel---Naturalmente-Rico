@@ -34,9 +34,7 @@ export default async function ProductoDetalle({
 
         <div>
           <span className="inline-block rounded-full bg-crema-alta px-3 py-1 text-xs text-oliva">
-            {producto.categoria === "congelados"
-              ? "Congelado"
-              : "Cocido, para hoy"}
+              Congelado
           </span>
           <h1 className="mt-3 font-display text-3xl text-tinta">
             {producto.nombre}
