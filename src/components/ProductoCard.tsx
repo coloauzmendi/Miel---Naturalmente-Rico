@@ -5,7 +5,8 @@ import { useState } from "react";
 import { Producto } from "@/types";
 import { formatearPrecio } from "@/lib/formato";
 import { useCarrito } from "@/components/CarritoContext";
-import { Plus, Snowflake, Flame } from "lucide-react";
+import { etiquetaCategoria } from "@/lib/categorias";
+import { Plus, Sun, Moon } from "lucide-react";
 
 export default function ProductoCard({ producto }: { producto: Producto }) {
   const { agregar } = useCarrito();
@@ -39,14 +40,12 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <span className="inline-flex w-fit items-center gap-1 rounded-full bg-crema px-2.5 py-1 text-xs text-oliva">
-          {producto.categoria === "congelados" ? (
-            <Snowflake size={12} />
+          {producto.categoria === "desayunos-meriendas" ? (
+            <Sun size={12} />
           ) : (
-            <Flame size={12} />
+            <Moon size={12} />
           )}
-          {producto.categoria === "congelados"
-            ? "Congelado"
-            : "Cocido, para hoy"}
+          {etiquetaCategoria(producto.categoria)}
         </span>
 
         <Link href={`/productos/${producto.id}`}>

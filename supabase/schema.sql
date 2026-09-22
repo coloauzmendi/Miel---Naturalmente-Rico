@@ -49,7 +49,7 @@ create table if not exists public.productos (
   nombre text not null,
   descripcion text not null default '',
   precio integer not null check (precio >= 0),
-  categoria text not null check (categoria in ('cocidos', 'congelados')),
+  categoria text not null check (categoria in ('almuerzos-cenas', 'desayunos-meriendas')),
   imagen_url text,
   stock integer not null default 0,
   activo boolean not null default true,

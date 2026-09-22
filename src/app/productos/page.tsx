@@ -1,8 +1,16 @@
 import { obtenerProductos } from "@/lib/productos";
+import { esCategoria } from "@/lib/categorias";
 import CatalogoSeccion from "@/components/CatalogoSeccion";
 
-export default async function ProductosPage() {
-  const productos = await obtenerProductos();
+export default async function ProductosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ categoria?: string }>;
+}) {
+  const [productos, { categoria }] = await Promise.all([
+    obtenerProductos(),
+    searchParams,
+  ]);
 
   return (
     <main className="min-h-screen bg-crema-alta">
@@ -21,7 +29,12 @@ export default async function ProductosPage() {
         </p>
       </section>
 
-      <CatalogoSeccion productos={productos} mostrarTitulo={false} />
+      <CatalogoSeccion
+        key={categoria ?? "todos"}
+        productos={productos}
+        mostrarTitulo={false}
+        filtroInicial={esCategoria(categoria) ? categoria : "todos"}
+      />
     </main>
   );
 }

@@ -3,16 +3,18 @@
 import { useState } from "react";
 import { Producto, Categoria } from "@/types";
 import { formatearPrecio } from "@/lib/formato";
+import { CATEGORIAS, etiquetaCategoria } from "@/lib/categorias";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 const VACIO = {
   nombre: "",
   descripcion: "",
   precio: 0,
-  categoria: "cocidos" as Categoria,
+  categoria: "almuerzos-cenas" as Categoria,
   imagen_url: "",
   stock: 0,
   activo: true,
+  destacado: false,
 };
 
 export default function AdminProductosClient({
@@ -43,6 +45,7 @@ export default function AdminProductosClient({
       imagen_url: p.imagen_url ?? "",
       stock: p.stock,
       activo: p.activo,
+      destacado: p.destacado,
     });
     setEditando(p.id);
     setMostrarForm(true);
@@ -109,8 +112,11 @@ export default function AdminProductosClient({
             }
             className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
           >
-            <option value="cocidos">Cocidos</option>
-            <option value="congelados">Congelados</option>
+            {CATEGORIAS.map((c) => (
+              <option key={c.valor} value={c.valor}>
+                {c.etiqueta}
+              </option>
+            ))}
           </select>
           <textarea
             placeholder="Descripción"
@@ -150,6 +156,16 @@ export default function AdminProductosClient({
             />
             Visible en la tienda
           </label>
+          <label className="flex items-center gap-2 text-sm text-tinta">
+            <input
+              type="checkbox"
+              checked={form.destacado}
+              onChange={(e) =>
+                setForm({ ...form, destacado: e.target.checked })
+              }
+            />
+            Destacado en la página principal
+          </label>
           {error && (
             <p className="text-sm text-ciruela sm:col-span-2">{error}</p>
           )}
@@ -181,9 +197,15 @@ export default function AdminProductosClient({
                 {!p.activo && (
                   <span className="ml-2 text-xs text-tinta/40">(oculto)</span>
                 )}
+                {p.destacado && (
+                  <span className="ml-2 text-xs text-dorado-oscuro">
+                    ★ destacado
+                  </span>
+                )}
               </p>
               <p className="text-sm text-tinta/60">
-                {formatearPrecio(p.precio)} · Stock: {p.stock} · {p.categoria}
+                {formatearPrecio(p.precio)} · Stock: {p.stock} ·{" "}
+                {etiquetaCategoria(p.categoria)}
               </p>
             </div>
             <button

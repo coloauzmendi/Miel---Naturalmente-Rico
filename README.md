@@ -38,6 +38,11 @@ Abrí http://localhost:3000 — vas a ver la tienda funcionando en modo demo.
    contenido de `supabase/schema.sql` de este repo, y ejecutalo. Esto crea
    las tablas de productos, pedidos y perfiles, con las reglas de
    seguridad ya configuradas.
+
+   > Si tu base ya estaba creada con las categorías viejas ("cocidos" y
+   > "congelados"), ejecutá también
+   > `supabase/migraciones/2026-09-22-categorias-comidas.sql` para pasar a
+   > "Almuerzos y cenas" y "Desayunos y meriendas".
 3. Andá a **Project Settings → API** y copiá:
    - `Project URL` → pegalo en `NEXT_PUBLIC_SUPABASE_URL`
    - `anon public key` → pegalo en `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -121,6 +126,7 @@ src/
   types/               → tipos de TypeScript compartidos
 supabase/
   schema.sql           → esquema completo de la base de datos
+  migraciones/         → cambios para bases que ya estaban creadas
 ```
 
 ## Próximos pasos posibles

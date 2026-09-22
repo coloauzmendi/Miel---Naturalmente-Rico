@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { obtenerProductos } from "@/lib/productos";
-import CatalogoSeccion from "@/components/CatalogoSeccion";
+import ProductosInicio from "@/components/ProductosInicio";
 import CarruselNosotras from "@/components/CarruselNosotras";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import HeroFotos from "@/components/HeroFotos";
@@ -142,7 +142,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <CatalogoSeccion productos={productos} />
+      <ProductosInicio productos={productos} />
 
       <section className="border-y border-linea bg-crema-alta">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-14 md:grid-cols-[1.1fr_0.9fr] md:items-center">

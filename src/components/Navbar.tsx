@@ -22,7 +22,7 @@ export default function Navbar() {
   }, []);
 
   const enlaces = [
-    { href: "/#productos", label: "Productos" },
+    { href: "/productos", label: "Productos" },
     { href: "/#nosotras", label: "Nosotras" },
     { href: "/#contacto", label: "Contacto" },
   ];
