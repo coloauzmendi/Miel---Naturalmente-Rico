@@ -3,10 +3,9 @@ import { obtenerProductos } from "@/lib/productos";
 import CatalogoSeccion from "@/components/CatalogoSeccion";
 import CarruselNosotras from "@/components/CarruselNosotras";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
-import StoryCarousel from "@/components/StoryCarousel";
+import HeroFotos from "@/components/HeroFotos";
 import {
   ArrowRight,
-  ArrowDown,
   CheckCircle2,
   Clock3,
   House,
@@ -21,56 +20,33 @@ export default async function Home() {
 
   return (
     <>
-      <section className="border-b border-linea bg-crema-alta">
-        <div className="mx-auto grid max-w-[100rem] gap-8 px-5 py-10 md:grid-cols-[0.65fr_1.35fr] md:items-center md:gap-10 md:py-10 lg:gap-14 lg:px-10 lg:py-12">
-          <div>
-            <p className="mb-4 text-sm text-dorado-oscuro">
-              Alimentos cocidos y congelados
-            </p>
-            <h1 className="font-display text-4xl leading-[1.05] text-tinta md:text-5xl">
-              Comida casera de verdad,
-              <br />
-              lista cuando la necesites.
-            </h1>
-            <p className="mt-5 max-w-md text-tinta/70">
-              Alimentos ricos y nutricionalmente altos para acompañar tus
-              comidas.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="#productos"
-                className="rounded-full bg-boton px-6 py-3 text-sm font-medium text-tinta transition-colors hover:bg-boton-oscuro"
-              >
-                Ver productos
-              </a>
-              <a
-                href="https://wa.me/5493410000000"
-                className="rounded-full border border-oliva px-6 py-3 text-sm font-medium text-oliva transition-colors hover:bg-oliva hover:text-crema-alta"
-              >
-                Consultar por WhatsApp
-              </a>
-            </div>
-            <a
-              href="#historias-productos"
-              className="mt-8 flex w-fit items-center gap-2 text-sm font-medium text-marron md:hidden"
-            >
-              <span>Deslizá hacia abajo para ver nuestros productos</span>
-              <ArrowDown className="flecha-deslizar" size={18} />
-            </a>
-          </div>
-
-          <div className="hidden md:block">
-            <StoryCarousel />
-          </div>
+      <HeroFotos>
+        <p className="mb-4 text-sm text-dorado-oscuro">
+          Alimentos cocidos y congelados
+        </p>
+        <h1 className="font-display text-4xl leading-[1.05] text-tinta md:text-5xl">
+          Comida casera de verdad,
+          <br className="hidden sm:block" />
+          lista cuando la necesites.
+        </h1>
+        <p className="mx-auto mt-5 max-w-md text-tinta/70">
+          Alimentos ricos y nutricionalmente altos para acompañar tus comidas.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <a
+            href="#productos"
+            className="rounded-full bg-boton px-6 py-3 text-sm font-medium text-tinta transition-colors hover:bg-boton-oscuro"
+          >
+            Ver productos
+          </a>
+          <a
+            href="https://wa.me/5493410000000"
+            className="rounded-full border border-oliva px-6 py-3 text-sm font-medium text-oliva transition-colors hover:bg-oliva hover:text-crema-alta"
+          >
+            Consultar por WhatsApp
+          </a>
         </div>
-      </section>
-
-      <section
-        id="historias-productos"
-        className="overflow-hidden bg-crema-alta px-5 pb-10 pt-28 md:hidden"
-      >
-        <StoryCarousel />
-      </section>
+      </HeroFotos>
 
       <section className="mx-auto max-w-6xl px-5 py-14">
         <div className="grid gap-6 sm:grid-cols-3">
