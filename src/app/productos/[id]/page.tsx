@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { obtenerProductoPorId } from "@/lib/productos";
 import { formatearPrecio } from "@/lib/formato";
+import { etiquetaCategoria } from "@/lib/categorias";
 import BotonAgregar from "@/components/BotonAgregar";
 import { Clock3, MessageCircle, Snowflake } from "lucide-react";
 
@@ -33,9 +35,12 @@ export default async function ProductoDetalle({
         </div>
 
         <div>
-          <span className="inline-block rounded-full bg-crema-alta px-3 py-1 text-xs text-oliva">
-              Congelado
-          </span>
+          <Link
+            href={`/productos?categoria=${producto.categoria}`}
+            className="inline-block rounded-full bg-crema-alta px-3 py-1 text-xs text-oliva hover:underline"
+          >
+            {etiquetaCategoria(producto.categoria)}
+          </Link>
           <h1 className="mt-3 font-display text-3xl text-tinta">
             {producto.nombre}
           </h1>

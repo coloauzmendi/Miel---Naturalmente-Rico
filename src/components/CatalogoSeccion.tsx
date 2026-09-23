@@ -1,35 +1,28 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Producto } from "@/types";
+import { Categoria, Producto } from "@/types";
+import { CATEGORIAS } from "@/lib/categorias";
 import ProductoCard from "@/components/ProductoCard";
 import { Search } from "lucide-react";
 
-type Filtro = "todos" | "almuerzos-cenas" | "desayunos-meriendas";
+type Filtro = "todos" | Categoria;
 
 const FILTROS: { valor: Filtro; etiqueta: string }[] = [
-  {
-    valor: "todos",
-    etiqueta: "Todos",
-  },
-  {
-    valor: "almuerzos-cenas",
-    etiqueta: "Almuerzos y cenas",
-  },
-  {
-    valor: "desayunos-meriendas",
-    etiqueta: "Desayunos y meriendas",
-  },
+  { valor: "todos", etiqueta: "Todos" },
+  ...CATEGORIAS,
 ];
 
 export default function CatalogoSeccion({
   productos,
   mostrarTitulo = true,
+  filtroInicial = "todos",
 }: {
   productos: Producto[];
   mostrarTitulo?: boolean;
+  filtroInicial?: Filtro;
 }) {
-  const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [filtro, setFiltro] = useState<Filtro>(filtroInicial);
   const [busqueda, setBusqueda] = useState("");
   const [orden, setOrden] = useState("recientes");
 
@@ -61,6 +54,15 @@ export default function CatalogoSeccion({
       return (b.created_at ?? "").localeCompare(a.created_at ?? "");
     });
   }, [productos, filtro, busqueda, orden]);
+
+  // Deja la categoría en la URL para poder compartir el link o volver atrás.
+  function elegirFiltro(valor: Filtro) {
+    setFiltro(valor);
+    const url = new URL(window.location.href);
+    if (valor === "todos") url.searchParams.delete("categoria");
+    else url.searchParams.set("categoria", valor);
+    window.history.replaceState(null, "", url);
+  }
 
   return (
     <section id="productos" className="mx-auto max-w-6xl px-5 py-16">
@@ -121,7 +123,7 @@ export default function CatalogoSeccion({
             <button
               key={f.valor}
               type="button"
-              onClick={() => setFiltro(f.valor)}
+              onClick={() => elegirFiltro(f.valor)}
               className={`whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 filtro === f.valor
                   ? "border-oliva bg-oliva text-crema-alta"

@@ -13,7 +13,7 @@ export const productosDemo: Producto[] = [
     descripcion:
       "Masa casera, relleno de zapallo asado, cebolla caramelizada y un toque de jengibre fresco. Se entrega congelada, lista para horno.",
     precio: 8900,
-    categoria: "congelados",
+    categoria: "almuerzos-cenas",
     imagen_url: null,
     stock: 12,
     activo: true,
@@ -25,7 +25,7 @@ export const productosDemo: Producto[] = [
     descripcion:
       "Lentejas, vegetales de estación y un ahumado suave de pimentón. Porción individual, cocido y enfriado el mismo día.",
     precio: 6200,
-    categoria: "cocidos",
+    categoria: "almuerzos-cenas",
     imagen_url: null,
     stock: 20,
     activo: true,
@@ -37,7 +37,7 @@ export const productosDemo: Producto[] = [
     descripcion:
       "Choclo fresco, cebolla de verdeo y un toque de albahaca. Congeladas crudas para que las hornees vos en el momento.",
     precio: 7400,
-    categoria: "congelados",
+    categoria: "almuerzos-cenas",
     imagen_url: null,
     stock: 15,
     activo: true,
@@ -49,7 +49,7 @@ export const productosDemo: Producto[] = [
     descripcion:
       "Cocción lenta de 12 horas, sin sal agregada. Ideal como base de sopas o para tomar solo.",
     precio: 4300,
-    categoria: "congelados",
+    categoria: "almuerzos-cenas",
     imagen_url: null,
     stock: 30,
     activo: true,
@@ -61,7 +61,7 @@ export const productosDemo: Producto[] = [
     descripcion:
       "Pollo cocido a fuego lento con batata, morrón y cebolla. Se entrega recién hecho, para consumir en el día.",
     precio: 9800,
-    categoria: "cocidos",
+    categoria: "almuerzos-cenas",
     imagen_url: null,
     stock: 8,
     activo: true,
@@ -73,9 +73,57 @@ export const productosDemo: Producto[] = [
     descripcion:
       "Cremosa, sin lácteos. Un clásico de estación sin conservantes ni aditivos.",
     precio: 5100,
-    categoria: "cocidos",
+    categoria: "almuerzos-cenas",
     imagen_url: null,
     stock: 18,
+    activo: true,
+    destacado: false,
+  },
+  {
+    id: "demo-7",
+    nombre: "Pancakes de avena (x6)",
+    descripcion:
+      "Nuestro producto estrella. Esponjosos, sin azúcar refinada y listos en minutos en la tostadora o sartén.",
+    precio: 5600,
+    categoria: "desayunos-meriendas",
+    imagen_url: null,
+    stock: 25,
+    activo: true,
+    destacado: true,
+  },
+  {
+    id: "demo-8",
+    nombre: "Granola casera (400g)",
+    descripcion:
+      "Avena, semillas, frutos secos y miel, tostada lento en el horno. Ideal con yogur o leche.",
+    precio: 4800,
+    categoria: "desayunos-meriendas",
+    imagen_url: null,
+    stock: 20,
+    activo: true,
+    destacado: false,
+  },
+  {
+    id: "demo-9",
+    nombre: "Muffins de carrot (x4)",
+    descripcion:
+      "Húmedos por dentro y crocantes por fuera, con zanahoria, nueces y un toque de canela.",
+    precio: 5200,
+    categoria: "desayunos-meriendas",
+    imagen_url: null,
+    stock: 4,
+    activo: true,
+    destacado: true,
+  },
+  {
+    id: "demo-10",
+    nombre: "Waffles belgas (x4)",
+    descripcion:
+      "Extremadamente versátiles: con frutas, miel o algo salado. Del freezer a la tostadora.",
+    precio: 6100,
+    categoria: "desayunos-meriendas",
+    imagen_url: null,
+    stock: 15,
     activo: true,
     destacado: false,
   },

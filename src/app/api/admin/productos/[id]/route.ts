@@ -38,6 +38,7 @@ export async function PUT(
       imagen_url: body.imagen_url || null,
       stock: body.stock,
       activo: body.activo,
+      destacado: body.destacado ?? false,
     })
     .eq("id", id)
     .select()

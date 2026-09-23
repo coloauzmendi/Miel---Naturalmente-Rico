@@ -104,22 +104,6 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .flecha-deslizar {
-    animation: flecha-deslizar 1.2s ease-in-out infinite;
-  }
-}
-
-@keyframes flecha-deslizar {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
   .carrusel-pista {
     animation: deslizar-fotos 25s linear infinite;
   }
