@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Producto } from "@/types";
 import { useCarrito } from "@/components/CarritoContext";
+import { formatearPrecio } from "@/lib/formato";
 import { Minus, Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -11,7 +12,8 @@ export default function BotonAgregar({ producto }: { producto: Producto }) {
   const [cantidad, setCantidad] = useState(1);
   const [agregado, setAgregado] = useState(false);
   const sabores = producto.sabores ?? [];
-  const [sabor, setSabor] = useState("");
+  const [nombreSabor, setNombreSabor] = useState("");
+  const saborElegido = sabores.find((s) => s.nombre === nombreSabor) ?? null;
 
   if (producto.stock <= 0) {
     return (
@@ -24,7 +26,7 @@ export default function BotonAgregar({ producto }: { producto: Producto }) {
     );
   }
 
-  const faltaElegirSabor = sabores.length > 0 && !sabor;
+  const faltaElegirSabor = sabores.length > 0 && !saborElegido;
 
   return (
     <div className="flex flex-col gap-4">
@@ -32,19 +34,24 @@ export default function BotonAgregar({ producto }: { producto: Producto }) {
         <label className="block text-sm font-medium text-tinta">
           Elegí el sabor
           <select
-            value={sabor}
-            onChange={(e) => setSabor(e.target.value)}
+            value={nombreSabor}
+            onChange={(e) => setNombreSabor(e.target.value)}
             className="mt-1 block w-full max-w-xs rounded-lg border border-linea bg-crema-alta px-3 py-2 text-sm text-tinta outline-none focus:border-oliva"
           >
             <option value="" disabled>
               Seleccioná una opción
             </option>
             {sabores.map((opcion) => (
-              <option key={opcion} value={opcion}>
-                {opcion}
+              <option key={opcion.nombre} value={opcion.nombre}>
+                {opcion.nombre} — {formatearPrecio(opcion.precio)}
               </option>
             ))}
           </select>
+          {saborElegido && (
+            <span className="mt-1 block font-display text-lg text-ciruela">
+              {formatearPrecio(saborElegido.precio)}
+            </span>
+          )}
         </label>
       )}
 
@@ -69,7 +76,12 @@ export default function BotonAgregar({ producto }: { producto: Producto }) {
 
         <button
           onClick={() => {
-            agregar(producto, cantidad, sabor || null);
+            // Si el sabor elegido tiene su propio precio, ese es el precio
+            // que queda guardado en esta línea del carrito.
+            const productoAAgregar = saborElegido
+              ? { ...producto, precio: saborElegido.precio }
+              : producto;
+            agregar(productoAAgregar, cantidad, saborElegido?.nombre ?? null);
             setAgregado(true);
             setTimeout(() => setAgregado(false), 1800);
           }}

@@ -57,9 +57,10 @@ create table if not exists public.productos (
   stock integer not null default 0,
   activo boolean not null default true,
   destacado boolean not null default false,
-  -- Variantes que el cliente elige antes de comprar (ej: sabores). null o
-  -- lista vacía significa que el producto no tiene variantes.
-  sabores text[],
+  -- Variantes que el cliente elige antes de comprar (ej: sabores), cada
+  -- una con su propio precio: [{"nombre": "Acelga", "precio": 8500}, ...].
+  -- null o lista vacía significa que el producto no tiene variantes.
+  sabores jsonb,
   created_at timestamptz not null default now()
 );
 

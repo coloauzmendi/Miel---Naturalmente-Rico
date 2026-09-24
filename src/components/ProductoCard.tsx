@@ -83,7 +83,9 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
 
         <div className="mt-auto flex items-center justify-between pt-3">
           <span className="font-display text-lg text-ciruela">
-            {formatearPrecio(producto.precio)}
+            {tieneSabores
+              ? `Desde ${formatearPrecio(Math.min(...(producto.sabores ?? []).map((s) => s.precio)))}`
+              : formatearPrecio(producto.precio)}
           </span>
           {sinStock ? (
             <button

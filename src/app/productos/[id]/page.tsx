@@ -36,7 +36,9 @@ export default async function ProductoDetalle({
             {producto.nombre}
           </h1>
           <p className="mt-2 font-display text-2xl text-ciruela">
-            {formatearPrecio(producto.precio)}
+            {producto.sabores && producto.sabores.length > 0
+              ? `Desde ${formatearPrecio(Math.min(...producto.sabores.map((s) => s.precio)))}`
+              : formatearPrecio(producto.precio)}
           </p>
           <p className="mt-5 text-tinta/70">{producto.descripcion}</p>
 

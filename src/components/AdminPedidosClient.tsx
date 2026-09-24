@@ -47,9 +47,9 @@ export default function AdminPedidosClient({
   return (
     <div className="mt-6 flex flex-col gap-4">
       {pedidos.map((pedido) => (
-        <div key={pedido.id} className="rounded-2xl border border-linea bg-crema-alta p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
+        <div key={pedido.id} className="rounded-2xl border border-linea bg-crema-alta p-4 sm:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
               <p className="text-sm text-tinta/60">
                 {new Date(pedido.created_at).toLocaleString("es-AR")}
               </p>
@@ -72,7 +72,7 @@ export default function AdminPedidosClient({
             <select
               value={pedido.estado}
               onChange={(e) => cambiarEstado(pedido.id, e.target.value as EstadoPedido)}
-              className="rounded-full border border-linea bg-white px-3 py-1.5 text-sm outline-none focus:border-oliva"
+              className="w-full rounded-full border border-linea bg-white px-3 py-1.5 text-sm outline-none focus:border-oliva sm:w-auto"
             >
               {ESTADOS.map((e) => (
                 <option key={e} value={e}>

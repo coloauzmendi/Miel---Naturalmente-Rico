@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Producto, Categoria } from "@/types";
+import { Producto, Categoria, SaborProducto } from "@/types";
 import { formatearPrecio } from "@/lib/formato";
 import { CATEGORIAS, etiquetaCategoria } from "@/lib/categorias";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
@@ -15,9 +15,7 @@ const VACIO = {
   stock: 0,
   activo: true,
   destacado: false,
-  // Se editan como texto separado por comas y se convierten a lista recién
-  // al guardar (ver guardar()).
-  saboresTexto: "",
+  sabores: [] as SaborProducto[],
 };
 
 export default function AdminProductosClient({
@@ -65,6 +63,32 @@ export default function AdminProductosClient({
     }));
   }
 
+  function agregarSabor() {
+    setForm((f) => ({
+      ...f,
+      sabores: [...f.sabores, { nombre: "", precio: f.precio || 0 }],
+    }));
+  }
+
+  function actualizarSabor(
+    indice: number,
+    cambios: Partial<SaborProducto>,
+  ) {
+    setForm((f) => ({
+      ...f,
+      sabores: f.sabores.map((s, i) =>
+        i === indice ? { ...s, ...cambios } : s,
+      ),
+    }));
+  }
+
+  function quitarSabor(indice: number) {
+    setForm((f) => ({
+      ...f,
+      sabores: f.sabores.filter((_, i) => i !== indice),
+    }));
+  }
+
   function abrirNuevo() {
     setForm(VACIO);
     setEditando(null);
@@ -82,7 +106,7 @@ export default function AdminProductosClient({
       stock: p.stock,
       activo: p.activo,
       destacado: p.destacado,
-      saboresTexto: (p.sabores ?? []).join(", "),
+      sabores: p.sabores ?? [],
     });
     setEditando(p.id);
     setMostrarForm(true);
@@ -97,16 +121,17 @@ export default function AdminProductosClient({
         ? `/api/admin/productos/${editando}`
         : "/api/admin/productos";
       const method = editando ? "PUT" : "POST";
-      const { saboresTexto, ...resto } = form;
-      const sabores = saboresTexto
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+      const sabores = form.sabores
+        .filter((s) => s.nombre.trim())
+        .map((s) => ({
+          nombre: s.nombre.trim(),
+          precio: s.precio > 0 ? s.precio : form.precio,
+        }));
 
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...resto, sabores }),
+        body: JSON.stringify({ ...form, sabores }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -141,7 +166,7 @@ export default function AdminProductosClient({
       </button>
 
       {mostrarForm && (
-        <div className="mb-8 grid gap-3 rounded-2xl border border-linea bg-crema-alta p-5 sm:grid-cols-2">
+        <div className="mb-8 grid gap-3 rounded-2xl border border-linea bg-crema-alta p-4 sm:grid-cols-2 sm:p-5">
           <input
             placeholder="Nombre"
             value={form.nombre}
@@ -239,21 +264,52 @@ export default function AdminProductosClient({
               subirlas en el orden que quieras.
             </span>
           </div>
-          <label className="text-sm text-tinta sm:col-span-2">
-            Sabores u opciones (opcional, separados por coma)
-            <input
-              placeholder="Ej: Acelga, Caprese, Choclo"
-              value={form.saboresTexto}
-              onChange={(e) =>
-                setForm({ ...form, saboresTexto: e.target.value })
-              }
-              className="mt-1 w-full rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
-            />
-            <span className="mt-1 block text-xs text-tinta/50">
+          <div className="flex flex-col gap-2 sm:col-span-2">
+            <p className="text-sm text-tinta">
+              Sabores u opciones (opcional, cada uno con su propio precio)
+            </p>
+            {form.sabores.map((sabor, indice) => (
+              <div key={indice} className="flex items-center gap-2">
+                <input
+                  placeholder="Nombre (ej: Acelga)"
+                  value={sabor.nombre}
+                  onChange={(e) =>
+                    actualizarSabor(indice, { nombre: e.target.value })
+                  }
+                  className="flex-1 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+                />
+                <input
+                  type="number"
+                  placeholder="Precio"
+                  value={sabor.precio || ""}
+                  onChange={(e) =>
+                    actualizarSabor(indice, { precio: Number(e.target.value) })
+                  }
+                  className="w-28 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+                />
+                <button
+                  type="button"
+                  onClick={() => quitarSabor(indice)}
+                  aria-label="Quitar este sabor"
+                  className="text-tinta/40 hover:text-ciruela"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={agregarSabor}
+              className="flex w-fit items-center gap-1 text-sm text-oliva hover:underline"
+            >
+              <Plus size={14} /> Agregar sabor
+            </button>
+            <span className="text-xs text-tinta/50">
               Si cargás al menos uno, el cliente va a tener que elegir una
-              opción antes de agregarlo al carrito.
+              opción antes de agregarlo al carrito. Si dejás el precio en
+              blanco, usa el precio de arriba.
             </span>
-          </label>
+          </div>
           <label className="flex items-center gap-2 text-sm text-tinta">
             <input
               type="checkbox"
@@ -296,8 +352,8 @@ export default function AdminProductosClient({
 
       <div className="divide-y divide-linea rounded-2xl border border-linea bg-crema-alta">
         {productos.map((p) => (
-          <div key={p.id} className="flex items-center gap-4 p-4">
-            <div className="flex-1">
+          <div key={p.id} className="flex items-center gap-3 p-4">
+            <div className="min-w-0 flex-1">
               <p className="font-medium text-tinta">
                 {p.nombre}{" "}
                 {!p.activo && (

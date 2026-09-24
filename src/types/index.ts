@@ -1,5 +1,11 @@
 export type Categoria = "almuerzos-cenas" | "desayunos-meriendas";
 
+export interface SaborProducto {
+  nombre: string;
+  // Precio final de esta variante (reemplaza al precio base del producto).
+  precio: number;
+}
+
 export interface Producto {
   id: string;
   nombre: string;
@@ -13,8 +19,9 @@ export interface Producto {
   activo: boolean;
   destacado: boolean;
   // Variantes que el cliente elige antes de comprar (ej: sabores, tipos de
-  // relleno). null o [] significa que el producto no tiene variantes.
-  sabores: string[] | null;
+  // relleno), cada una con su propio precio. null o [] significa que el
+  // producto no tiene variantes.
+  sabores: SaborProducto[] | null;
   created_at?: string;
 }
 
