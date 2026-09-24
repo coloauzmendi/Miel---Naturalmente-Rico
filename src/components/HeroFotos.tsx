@@ -27,7 +27,7 @@ const fotos: Foto[] = [
     imagen: hero4,
     alt: "Producto casero de Miel",
     // Solo en el celular: rotada un poco hacia la izquierda.
-    claseExtra: "-rotate-90 scale-[2.2] md:rotate-0 md:scale-100",
+    claseExtra: "-rotate-90 scale-[1.2] md:rotate-0",
   },
   { imagen: hero6, alt: "Producto casero de Miel", ocultaEnMovil: true },
   { imagen: hero7, alt: "Producto casero de Miel" },
