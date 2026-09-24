@@ -3,14 +3,13 @@
 import Image, { StaticImageData } from "next/image";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import tartas from "@/img/carrusel-tartas.jpeg";
-import pizza from "@/img/carrusel-pizzas.jpeg";
-import malfattis from "@/img/carrusel-malfattis.jpeg";
-import pancakes from "@/img/carrusel-pancakes.jpeg";
-import muffins from "@/img/carrusel-muffins.jpeg";
-import panes from "@/img/carrusel-panes.jpeg";
-import mermeladas from "@/img/carrusel-mermeladas.jpeg";
-import waffles from "@/img/carrusel-waffles.jpeg";
+import hero2 from "@/img/hero-2.jpeg";
+import hero3 from "@/img/hero-3.jpeg";
+import hero4 from "@/img/hero-4.jpeg";
+import hero6 from "@/img/hero-6.jpeg";
+import hero7 from "@/img/hero-7.jpeg";
+import hero8 from "@/img/hero-8.jpeg";
+import hero10 from "@/img/hero-10.jpeg";
 
 type Foto = {
   imagen: StaticImageData;
@@ -18,14 +17,13 @@ type Foto = {
 };
 
 const fotos: Foto[] = [
-  { imagen: pancakes, alt: "Pancakes caseros de Miel" },
-  { imagen: tartas, alt: "Tartas integrales individuales" },
-  { imagen: pizza, alt: "Pizza de masa integral" },
-  { imagen: malfattis, alt: "Malfattis de ricota y acelga" },
-  { imagen: muffins, alt: "Muffins de carrot y cítricos" },
-  { imagen: panes, alt: "Pan integral" },
-  { imagen: mermeladas, alt: "Mermelada de estación" },
-  { imagen: waffles, alt: "Waffles belgas" },
+  { imagen: hero2, alt: "Producto casero de Miel" },
+  { imagen: hero3, alt: "Producto casero de Miel" },
+  { imagen: hero4, alt: "Producto casero de Miel" },
+  { imagen: hero6, alt: "Producto casero de Miel" },
+  { imagen: hero7, alt: "Producto casero de Miel" },
+  { imagen: hero8, alt: "Producto casero de Miel" },
+  { imagen: hero10, alt: "Producto casero de Miel" },
 ];
 
 const DURACION = 5000;
@@ -58,11 +56,17 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
 
   return (
     <section
-      className="relative border-b border-linea bg-crema-alta"
-      aria-label="Productos de Miel"
+      className="relative overflow-hidden border-b border-linea"
+      aria-label="Miel, naturalmente rico"
     >
+      {/*
+        La sección ocupa exactamente lo que queda de pantalla debajo del
+        header y la barra de anuncios: la foto llena todo ese espacio de
+        punta a punta y el texto va centrado arriba, con un velo oscuro
+        para que se lea bien sobre cualquiera de las fotos.
+      */}
       <div
-        className="relative h-[24rem] overflow-hidden sm:h-[30rem] md:absolute md:inset-0 md:h-auto"
+        className="relative h-[calc(100dvh_-_var(--nav-h)_-_var(--marquee-h))] w-full"
         onTouchStart={(evento) => {
           inicioToque.current = evento.touches[0].clientX;
         }}
@@ -83,44 +87,46 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
           />
         ))}
 
-        {/* En escritorio el texto va sobre la foto: este degradé lo hace legible. */}
-        <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-l from-crema-alta/95 from-30% via-crema-alta/75 via-50% to-transparent to-75% md:block" />
+        {/* Velo semitransparente: da contraste al texto sin tapar la foto */}
+        <div className="pointer-events-none absolute inset-0 bg-tinta/70" />
+
+        <div className="relative z-10 flex h-full w-full items-center justify-center px-5">
+          <div className="mx-auto w-full max-w-4xl text-center text-crema-alta">
+            {children}
+          </div>
+        </div>
 
         <button
           type="button"
           onClick={anterior}
           aria-label="Foto anterior"
-          className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-crema-alta/90 text-tinta shadow-md transition-colors hover:bg-crema-alta md:left-5 md:h-14 md:w-14"
+          className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-crema-alta/20 text-crema-alta backdrop-blur-sm transition-colors hover:bg-crema-alta/35 md:left-6 md:h-12 md:w-12"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={22} />
         </button>
         <button
           type="button"
           onClick={siguiente}
           aria-label="Foto siguiente"
-          className="absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-crema-alta/90 text-tinta shadow-md transition-colors hover:bg-crema-alta md:right-5 md:h-14 md:w-14"
+          className="absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-crema-alta/20 text-crema-alta backdrop-blur-sm transition-colors hover:bg-crema-alta/35 md:right-6 md:h-12 md:w-12"
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={22} />
         </button>
 
-        <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 rounded-full bg-tinta/45 px-2.5 py-1.5 backdrop-blur-sm md:hidden">
+        <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 rounded-full bg-tinta/40 px-2.5 py-1.5 backdrop-blur-sm">
           {fotos.map((foto, fotoIndice) => (
             <button
               key={foto.imagen.src}
               type="button"
               onClick={() => setIndice(fotoIndice)}
               aria-label={`Ver foto ${fotoIndice + 1}`}
-              className={`h-2 rounded-full transition-all ${
-                fotoIndice === indice ? "w-5 bg-boton" : "w-2 bg-crema-alta/80"
+              className={`h-1.5 rounded-full transition-all ${
+                fotoIndice === indice
+                  ? "w-4 bg-marron"
+                  : "w-1.5 bg-crema-alta/80"
               }`}
             />
           ))}
-        </div>
-      </div>
-
-      <div className="relative mx-auto flex max-w-[100rem] px-5 py-12 md:min-h-[36rem] md:items-center md:justify-end md:py-16 md:pl-10 md:pr-24 lg:min-h-[40rem] lg:pr-32">
-        <div className="mx-auto w-full max-w-md text-center md:mx-0 md:max-w-lg">
-          {children}
         </div>
       </div>
     </section>

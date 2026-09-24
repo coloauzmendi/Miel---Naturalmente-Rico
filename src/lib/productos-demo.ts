@@ -18,6 +18,7 @@ export const productosDemo: Producto[] = [
     stock: 12,
     activo: true,
     destacado: true,
+    sabores: null,
   },
   {
     id: "demo-2",
@@ -30,6 +31,7 @@ export const productosDemo: Producto[] = [
     stock: 20,
     activo: true,
     destacado: true,
+    sabores: null,
   },
   {
     id: "demo-3",
@@ -42,6 +44,7 @@ export const productosDemo: Producto[] = [
     stock: 15,
     activo: true,
     destacado: false,
+    sabores: null,
   },
   {
     id: "demo-4",
@@ -54,6 +57,7 @@ export const productosDemo: Producto[] = [
     stock: 30,
     activo: true,
     destacado: false,
+    sabores: null,
   },
   {
     id: "demo-5",
@@ -66,6 +70,7 @@ export const productosDemo: Producto[] = [
     stock: 8,
     activo: true,
     destacado: true,
+    sabores: null,
   },
   {
     id: "demo-6",
@@ -78,6 +83,7 @@ export const productosDemo: Producto[] = [
     stock: 18,
     activo: true,
     destacado: false,
+    sabores: null,
   },
   {
     id: "demo-7",
@@ -90,6 +96,7 @@ export const productosDemo: Producto[] = [
     stock: 25,
     activo: true,
     destacado: true,
+    sabores: null,
   },
   {
     id: "demo-8",
@@ -102,6 +109,7 @@ export const productosDemo: Producto[] = [
     stock: 20,
     activo: true,
     destacado: false,
+    sabores: null,
   },
   {
     id: "demo-9",
@@ -114,6 +122,7 @@ export const productosDemo: Producto[] = [
     stock: 4,
     activo: true,
     destacado: true,
+    sabores: null,
   },
   {
     id: "demo-10",
@@ -126,5 +135,6 @@ export const productosDemo: Producto[] = [
     stock: 15,
     activo: true,
     destacado: false,
+    sabores: null,
   },
 ];

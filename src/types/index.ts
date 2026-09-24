@@ -10,6 +10,9 @@ export interface Producto {
   stock: number;
   activo: boolean;
   destacado: boolean;
+  // Variantes que el cliente elige antes de comprar (ej: sabores, tipos de
+  // relleno). null o [] significa que el producto no tiene variantes.
+  sabores: string[] | null;
   created_at?: string;
 }
 
@@ -41,6 +44,7 @@ export interface PedidoItem {
   nombre_producto: string;
   precio_unitario: number;
   cantidad: number;
+  sabor: string | null;
 }
 
 export interface Perfil {
@@ -53,4 +57,6 @@ export interface Perfil {
 export interface ItemCarrito {
   producto: Producto;
   cantidad: number;
+  // Variante elegida (ej: "Acelga"). null si el producto no tiene sabores.
+  sabor: string | null;
 }

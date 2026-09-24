@@ -85,10 +85,11 @@ export default async function MisPedidosPage() {
               </div>
 
               <ul className="mt-4 divide-y divide-linea border-t border-linea pt-3 text-sm">
-                {pedido.pedido_items?.map((item: { id: string; cantidad: number; nombre_producto: string; precio_unitario: number }) => (
+                {pedido.pedido_items?.map((item: { id: string; cantidad: number; nombre_producto: string; precio_unitario: number; sabor: string | null }) => (
                   <li key={item.id} className="flex justify-between py-1.5 text-tinta/70">
                     <span>
                       {item.cantidad}× {item.nombre_producto}
+                      {item.sabor ? ` (${item.sabor})` : ""}
                     </span>
                     <span>{formatearPrecio(item.precio_unitario * item.cantidad)}</span>
                   </li>

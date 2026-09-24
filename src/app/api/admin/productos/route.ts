@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
       stock: body.stock,
       activo: body.activo ?? true,
       destacado: body.destacado ?? false,
+      sabores: body.sabores?.length ? body.sabores : null,
     })
     .select()
     .single();

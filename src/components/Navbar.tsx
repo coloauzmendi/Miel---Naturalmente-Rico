@@ -22,15 +22,16 @@ export default function Navbar() {
   }, []);
 
   const enlaces = [
-    { href: "/productos", label: "Productos" },
+    { href: "/#productos", label: "Productos" },
+    { href: "/#como-funciona", label: "Cómo comprar" },
     { href: "/#nosotras", label: "Nosotras" },
     { href: "/#contacto", label: "Contacto" },
   ];
 
   return (
     <div className="relative z-40">
-      <header className="sticky top-0 z-40 border-b border-marron bg-marron/95 text-crema-alta backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+      <header className="sticky top-0 z-40 h-[var(--nav-h)] border-b border-marron bg-marron/95 text-crema-alta backdrop-blur">
+        <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-5">
           <Link
             href="/"
             className="whitespace-nowrap font-display text-2xl tracking-tight text-crema-alta"
@@ -64,12 +65,12 @@ export default function Navbar() {
 
             <Link
               href="/carrito"
-              className="relative flex items-center gap-1.5 rounded-full bg-boton px-4 py-2 text-sm font-medium text-tinta transition-colors hover:bg-boton-oscuro"
+              className="relative flex items-center gap-1.5 rounded-full bg-crema-alta px-4 py-2 text-sm font-medium text-marron transition-colors hover:bg-white"
             >
               <ShoppingBasket size={18} />
               Carrito
               {cantidadTotal > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-boton text-xs text-tinta">
+                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-marron text-xs text-crema-alta">
                   {cantidadTotal}
                 </span>
               )}

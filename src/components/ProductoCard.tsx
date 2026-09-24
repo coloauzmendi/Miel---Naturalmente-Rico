@@ -12,6 +12,7 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
   const { agregar } = useCarrito();
   const [agregado, setAgregado] = useState(false);
   const sinStock = producto.stock <= 0;
+  const tieneSabores = (producto.sabores?.length ?? 0) > 0;
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-linea bg-crema-alta transition-shadow hover:shadow-[0_8px_24px_-8px_rgba(43,36,32,0.25)]">
@@ -61,18 +62,35 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
           <span className="font-display text-lg text-ciruela">
             {formatearPrecio(producto.precio)}
           </span>
-          <button
-            onClick={() => {
-              agregar(producto, 1);
-              setAgregado(true);
-              window.setTimeout(() => setAgregado(false), 1600);
-            }}
-            disabled={sinStock}
-            className="flex items-center gap-1 rounded-full bg-oliva px-3 py-2 text-sm text-crema-alta transition-colors hover:bg-oliva-claro disabled:cursor-not-allowed disabled:bg-linea disabled:text-tinta/50"
-          >
-            <Plus size={16} />
-            {sinStock ? "Sin stock" : agregado ? "Agregado" : "Agregar"}
-          </button>
+          {sinStock ? (
+            <button
+              disabled
+              className="flex items-center gap-1 rounded-full bg-linea px-3 py-2 text-sm text-tinta/50"
+            >
+              <Plus size={16} />
+              Sin stock
+            </button>
+          ) : tieneSabores ? (
+            <Link
+              href={`/productos/${producto.id}`}
+              className="flex items-center gap-1 rounded-full bg-oliva px-3 py-2 text-sm text-crema-alta transition-colors hover:bg-oliva-claro"
+            >
+              <Plus size={16} />
+              Elegir
+            </Link>
+          ) : (
+            <button
+              onClick={() => {
+                agregar(producto, 1);
+                setAgregado(true);
+                window.setTimeout(() => setAgregado(false), 1600);
+              }}
+              className="flex items-center gap-1 rounded-full bg-oliva px-3 py-2 text-sm text-crema-alta transition-colors hover:bg-oliva-claro"
+            >
+              <Plus size={16} />
+              {agregado ? "Agregado" : "Agregar"}
+            </button>
+          )}
         </div>
       </div>
     </div>

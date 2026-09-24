@@ -43,6 +43,10 @@ Abrí http://localhost:3000 — vas a ver la tienda funcionando en modo demo.
    > "congelados"), ejecutá también
    > `supabase/migraciones/2026-09-22-categorias-comidas.sql` para pasar a
    > "Almuerzos y cenas" y "Desayunos y meriendas".
+   >
+   > Si tu base ya estaba creada antes de que existieran los "sabores"
+   > (variantes) de producto, ejecutá también
+   > `supabase/migraciones/2026-09-24-sabores.sql`.
 3. Andá a **Project Settings → API** y copiá:
    - `Project URL` → pegalo en `NEXT_PUBLIC_SUPABASE_URL`
    - `anon public key` → pegalo en `NEXT_PUBLIC_SUPABASE_ANON_KEY`

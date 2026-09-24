@@ -77,6 +77,7 @@ export default function CheckoutPage() {
             nombre_producto: i.producto.nombre,
             precio_unitario: i.producto.precio,
             cantidad: i.cantidad,
+            sabor: i.sabor,
           })),
           direccion_entrega: direccion,
           telefono_contacto: telefono,
@@ -167,11 +168,12 @@ export default function CheckoutPage() {
           <div className="flex flex-col gap-2 text-sm">
             {items.map((i) => (
               <div
-                key={i.producto.id}
+                key={`${i.producto.id}::${i.sabor ?? ""}`}
                 className="flex justify-between text-tinta/70"
               >
                 <span>
                   {i.cantidad}× {i.producto.nombre}
+                  {i.sabor ? ` (${i.sabor})` : ""}
                 </span>
                 <span>{formatearPrecio(i.producto.precio * i.cantidad)}</span>
               </div>

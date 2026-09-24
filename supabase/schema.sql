@@ -54,6 +54,9 @@ create table if not exists public.productos (
   stock integer not null default 0,
   activo boolean not null default true,
   destacado boolean not null default false,
+  -- Variantes que el cliente elige antes de comprar (ej: sabores). null o
+  -- lista vacía significa que el producto no tiene variantes.
+  sabores text[],
   created_at timestamptz not null default now()
 );
 
@@ -136,7 +139,9 @@ create table if not exists public.pedido_items (
   producto_id uuid not null,
   nombre_producto text not null,
   precio_unitario integer not null check (precio_unitario >= 0),
-  cantidad integer not null check (cantidad > 0)
+  cantidad integer not null check (cantidad > 0),
+  -- Variante elegida por el cliente (ej: "Acelga"), si el producto tenía.
+  sabor text
 );
 
 alter table public.pedido_items enable row level security;

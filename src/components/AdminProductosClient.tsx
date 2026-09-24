@@ -15,6 +15,9 @@ const VACIO = {
   stock: 0,
   activo: true,
   destacado: false,
+  // Se editan como texto separado por comas y se convierten a lista recién
+  // al guardar (ver guardar()).
+  saboresTexto: "",
 };
 
 export default function AdminProductosClient({
@@ -27,7 +30,31 @@ export default function AdminProductosClient({
   const [form, setForm] = useState(VACIO);
   const [mostrarForm, setMostrarForm] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [subiendoImagen, setSubiendoImagen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function subirImagen(archivo: File) {
+    setSubiendoImagen(true);
+    setError(null);
+    try {
+      const datosArchivo = new FormData();
+      datosArchivo.append("archivo", archivo);
+      const res = await fetch("/api/admin/upload-imagen", {
+        method: "POST",
+        body: datosArchivo,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "No pudimos subir la imagen.");
+        return;
+      }
+      setForm((f) => ({ ...f, imagen_url: data.url }));
+    } catch {
+      setError("Hubo un problema de conexión al subir la imagen.");
+    } finally {
+      setSubiendoImagen(false);
+    }
+  }
 
   function abrirNuevo() {
     setForm(VACIO);
@@ -46,6 +73,7 @@ export default function AdminProductosClient({
       stock: p.stock,
       activo: p.activo,
       destacado: p.destacado,
+      saboresTexto: (p.sabores ?? []).join(", "),
     });
     setEditando(p.id);
     setMostrarForm(true);
@@ -60,10 +88,16 @@ export default function AdminProductosClient({
         ? `/api/admin/productos/${editando}`
         : "/api/admin/productos";
       const method = editando ? "PUT" : "POST";
+      const { saboresTexto, ...resto } = form;
+      const sabores = saboresTexto
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...resto, sabores }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -142,12 +176,56 @@ export default function AdminProductosClient({
             }
             className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
           />
-          <input
-            placeholder="URL de imagen (opcional)"
-            value={form.imagen_url}
-            onChange={(e) => setForm({ ...form, imagen_url: e.target.value })}
-            className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva sm:col-span-2"
-          />
+          <div className="flex flex-col gap-2 sm:col-span-2">
+            <label className="text-sm text-tinta">
+              Foto del producto
+              <div className="mt-1 flex flex-wrap items-center gap-3">
+                {form.imagen_url && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={form.imagen_url}
+                    alt=""
+                    className="h-16 w-16 rounded-lg border border-linea object-cover"
+                  />
+                )}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={(e) => {
+                    const archivo = e.target.files?.[0];
+                    if (archivo) subirImagen(archivo);
+                    e.target.value = "";
+                  }}
+                  disabled={subiendoImagen}
+                  className="text-sm text-tinta/70 file:mr-3 file:rounded-full file:border-0 file:bg-oliva file:px-4 file:py-2 file:text-sm file:text-crema-alta hover:file:bg-oliva-claro"
+                />
+                {subiendoImagen && (
+                  <span className="text-sm text-tinta/50">Subiendo…</span>
+                )}
+              </div>
+            </label>
+            <input
+              placeholder="O pegá una URL de imagen"
+              value={form.imagen_url}
+              onChange={(e) => setForm({ ...form, imagen_url: e.target.value })}
+              className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+            />
+          </div>
+          <label className="text-sm text-tinta sm:col-span-2">
+            Sabores u opciones (opcional, separados por coma)
+            <input
+              placeholder="Ej: Acelga, Caprese, Choclo"
+              value={form.saboresTexto}
+              onChange={(e) =>
+                setForm({ ...form, saboresTexto: e.target.value })
+              }
+              className="mt-1 w-full rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+            />
+            <span className="mt-1 block text-xs text-tinta/50">
+              Si cargás al menos uno, el cliente va a tener que elegir una
+              opción antes de agregarlo al carrito.
+            </span>
+          </label>
           <label className="flex items-center gap-2 text-sm text-tinta">
             <input
               type="checkbox"
@@ -206,6 +284,9 @@ export default function AdminProductosClient({
               <p className="text-sm text-tinta/60">
                 {formatearPrecio(p.precio)} · Stock: {p.stock} ·{" "}
                 {etiquetaCategoria(p.categoria)}
+                {p.sabores && p.sabores.length > 0
+                  ? ` · ${p.sabores.length} sabores`
+                  : ""}
               </p>
             </div>
             <button

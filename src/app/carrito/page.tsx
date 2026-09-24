@@ -32,9 +32,9 @@ export default function CarritoPage() {
       <h1 className="font-display text-3xl text-tinta">Tu carrito</h1>
 
       <div className="mt-8 divide-y divide-linea border-y border-linea">
-        {items.map(({ producto, cantidad }) => (
+        {items.map(({ producto, cantidad, sabor }) => (
           <div
-            key={producto.id}
+            key={`${producto.id}::${sabor ?? ""}`}
             className="flex flex-wrap items-center gap-3 py-5 sm:flex-nowrap sm:gap-4"
           >
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-linea bg-crema-alta">
@@ -59,6 +59,9 @@ export default function CarritoPage() {
               >
                 {producto.nombre}
               </Link>
+              {sabor && (
+                <p className="text-xs text-tinta/50">Sabor: {sabor}</p>
+              )}
               <p className="text-sm text-tinta/60">
                 {formatearPrecio(producto.precio)} c/u
               </p>
@@ -66,7 +69,7 @@ export default function CarritoPage() {
 
             <div className="ml-[5.5rem] flex items-center gap-3 rounded-full border border-linea px-2.5 py-1.5 sm:ml-0">
               <button
-                onClick={() => actualizarCantidad(producto.id, cantidad - 1)}
+                onClick={() => actualizarCantidad(producto.id, cantidad - 1, sabor)}
                 aria-label="Restar"
                 className="text-tinta/70 hover:text-tinta"
               >
@@ -74,7 +77,7 @@ export default function CarritoPage() {
               </button>
               <span className="w-4 text-center text-sm">{cantidad}</span>
               <button
-                onClick={() => actualizarCantidad(producto.id, cantidad + 1)}
+                onClick={() => actualizarCantidad(producto.id, cantidad + 1, sabor)}
                 aria-label="Sumar"
                 className="text-tinta/70 hover:text-tinta"
               >
@@ -87,7 +90,7 @@ export default function CarritoPage() {
             </p>
 
             <button
-              onClick={() => quitar(producto.id)}
+              onClick={() => quitar(producto.id, sabor)}
               aria-label="Quitar producto"
               className="text-tinta/40 hover:text-ciruela"
             >

@@ -12,9 +12,13 @@ import { ItemCarrito, Producto } from "@/types";
 
 interface CarritoContextValor {
   items: ItemCarrito[];
-  agregar: (producto: Producto, cantidad?: number) => void;
-  quitar: (productoId: string) => void;
-  actualizarCantidad: (productoId: string, cantidad: number) => void;
+  agregar: (producto: Producto, cantidad?: number, sabor?: string | null) => void;
+  quitar: (productoId: string, sabor?: string | null) => void;
+  actualizarCantidad: (
+    productoId: string,
+    cantidad: number,
+    sabor?: string | null,
+  ) => void;
   vaciar: () => void;
   total: number;
   cantidadTotal: number;
@@ -22,6 +26,12 @@ interface CarritoContextValor {
 
 const CarritoContext = createContext<CarritoContextValor | undefined>(undefined);
 const CLAVE_STORAGE = "miel-carrito";
+
+// Dos líneas son "la misma" solo si coinciden producto Y sabor: así "Tarta
+// (acelga)" y "Tarta (caprese)" quedan como renglones separados en el carrito.
+function mismoItem(item: ItemCarrito, productoId: string, sabor: string | null) {
+  return item.producto.id === productoId && (item.sabor ?? null) === (sabor ?? null);
+}
 
 export function CarritoProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ItemCarrito[]>([]);
@@ -31,8 +41,12 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const guardado = localStorage.getItem(CLAVE_STORAGE);
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratación intencional de estado persistido, se ejecuta una sola vez al montar
-      if (guardado) setItems(JSON.parse(guardado));
+      if (guardado) {
+        const itemsGuardados: ItemCarrito[] = JSON.parse(guardado);
+        // Compatibilidad con carritos guardados antes de que existiera "sabor".
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratación intencional de estado persistido, se ejecuta una sola vez al montar
+        setItems(itemsGuardados.map((i) => ({ ...i, sabor: i.sabor ?? null })));
+      }
     } catch {
       // si el storage está corrupto, arrancamos con carrito vacío
     } finally {
@@ -46,29 +60,36 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(CLAVE_STORAGE, JSON.stringify(items));
   }, [items, cargado]);
 
-  function agregar(producto: Producto, cantidad = 1) {
+  function agregar(producto: Producto, cantidad = 1, sabor: string | null = null) {
     setItems((prev) => {
-      const existente = prev.find((i) => i.producto.id === producto.id);
+      const existente = prev.find((i) => mismoItem(i, producto.id, sabor));
       if (existente) {
         return prev.map((i) =>
-          i.producto.id === producto.id
+          mismoItem(i, producto.id, sabor)
             ? { ...i, cantidad: Math.min(i.cantidad + cantidad, producto.stock) }
             : i
         );
       }
-      return [...prev, { producto, cantidad: Math.min(cantidad, producto.stock) }];
+      return [
+        ...prev,
+        { producto, cantidad: Math.min(cantidad, producto.stock), sabor },
+      ];
     });
   }
 
-  function quitar(productoId: string) {
-    setItems((prev) => prev.filter((i) => i.producto.id !== productoId));
+  function quitar(productoId: string, sabor: string | null = null) {
+    setItems((prev) => prev.filter((i) => !mismoItem(i, productoId, sabor)));
   }
 
-  function actualizarCantidad(productoId: string, cantidad: number) {
+  function actualizarCantidad(
+    productoId: string,
+    cantidad: number,
+    sabor: string | null = null,
+  ) {
     setItems((prev) =>
       prev
         .map((i) =>
-          i.producto.id === productoId
+          mismoItem(i, productoId, sabor)
             ? { ...i, cantidad: Math.max(1, Math.min(cantidad, i.producto.stock)) }
             : i
         )

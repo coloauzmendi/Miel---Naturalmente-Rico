@@ -2,7 +2,6 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
 }
 
 html,
@@ -22,10 +21,21 @@ body {
   --miel-dorado-oscuro: #a3721c;
   --miel-oliva: #3d4a34;
   --miel-oliva-claro: #59684a;
+  /* Verde más claro y saturado que el oliva de marca: el oliva/oliva-claro
+     quedan pensados para texto sobre fondo claro, y se pierden sobre una
+     foto oscura. Este se usa puntualmente ahí donde antes había amarillo
+     en el hero (texto sobre la foto), no reemplaza al oliva en el resto
+     del sitio. */
+  --miel-verde-hero: #a3c55f;
   --miel-ciruela: #5b2a3b;
   --miel-ciruela-oscuro: #431e2b;
   --miel-tinta: #2b2420;
   --miel-linea: #ddceac;
+
+  /* Alturas fijas del header y la barra de anuncios, para poder calcular
+     secciones que ocupan exactamente el resto de la pantalla. */
+  --nav-h: 4.5rem;
+  --marquee-h: 2rem;
 }
 
 @theme inline {
@@ -38,6 +48,7 @@ body {
   --color-dorado-oscuro: var(--miel-dorado-oscuro);
   --color-oliva: var(--miel-oliva);
   --color-oliva-claro: var(--miel-oliva-claro);
+  --color-verde-hero: var(--miel-verde-hero);
   --color-ciruela: var(--miel-ciruela);
   --color-ciruela-oscuro: var(--miel-ciruela-oscuro);
   --color-tinta: var(--miel-tinta);
@@ -123,91 +134,6 @@ body {
   }
 }
 
-.hero-foto-1 {
-  left: 0;
-  top: 2%;
-  width: 40%;
-  height: 39%;
-  transform: rotate(-6deg);
-}
-
-.hero-foto-2 {
-  left: 38%;
-  top: 0;
-  width: 28%;
-  height: 27%;
-  transform: rotate(5deg);
-}
-
-.hero-foto-3 {
-  right: 0;
-  top: 3%;
-  width: 29%;
-  height: 33%;
-  transform: rotate(8deg);
-}
-
-.hero-foto-4 {
-  left: 31%;
-  top: 28%;
-  width: 30%;
-  height: 25%;
-  transform: rotate(-3deg);
-}
-
-.hero-foto-5 {
-  left: 1%;
-  bottom: 8%;
-  width: 27%;
-  height: 25%;
-  transform: rotate(7deg);
-}
-
-.hero-foto-6 {
-  left: 30%;
-  bottom: 10%;
-  width: 30%;
-  height: 30%;
-  transform: rotate(-7deg);
-}
-
-.hero-foto-7 {
-  right: 0;
-  bottom: 10%;
-  width: 32%;
-  height: 32%;
-  transform: rotate(-4deg);
-}
-
-.hero-foto-8 {
-  left: 62%;
-  top: 45%;
-  width: 24%;
-  height: 21%;
-  transform: rotate(6deg);
-}
-
-.hero-foto-9 {
-  left: 3%;
-  top: 43%;
-  width: 22%;
-  height: 20%;
-  transform: rotate(-8deg);
-}
-
-.hero-foto-10 {
-  right: 0;
-  top: 35%;
-  width: 22%;
-  height: 21%;
-  transform: rotate(7deg);
-}
-
-.hero-foto:hover {
-  transform: rotate(0deg) scale(1.5);
-}
-
-
 @keyframes marquee-infinito {
   0% {
     transform: translateX(0%);
@@ -219,4 +145,23 @@ body {
 
 .animacion-marquee {
   animation: marquee-infinito 30s linear infinite;
+}
+
+/* Entrada de las tarjetas de "Cómo funciona": aparecen agrandadas y
+   transparentes, y se asientan en su tamaño normal. Va como animation
+   (no transition) a propósito, para que no comparta el "delay" con la
+   transición del hover y el hover siga respondiendo al instante. */
+@keyframes entrada-tarjeta {
+  from {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animar-tarjeta {
+  animation: entrada-tarjeta 0.6s ease-out both;
 }

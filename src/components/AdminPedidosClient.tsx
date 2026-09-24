@@ -78,6 +78,7 @@ export default function AdminPedidosClient({
               <li key={item.id} className="flex justify-between py-1">
                 <span>
                   {item.cantidad}× {item.nombre_producto}
+                  {item.sabor ? ` (${item.sabor})` : ""}
                 </span>
                 <span>{formatearPrecio(item.precio_unitario * item.cantidad)}</span>
               </li>

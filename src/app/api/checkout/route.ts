@@ -7,6 +7,7 @@ interface ItemRecibido {
   nombre_producto: string;
   precio_unitario: number;
   cantidad: number;
+  sabor?: string | null;
 }
 
 export async function POST(request: NextRequest) {
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest) {
       nombre_producto: i.nombre_producto,
       precio_unitario: i.precio_unitario,
       cantidad: i.cantidad,
+      sabor: i.sabor ?? null,
     }))
   );
 
@@ -95,7 +97,7 @@ export async function POST(request: NextRequest) {
       body: {
         items: items.map((i) => ({
           id: i.producto_id,
-          title: i.nombre_producto,
+          title: i.sabor ? `${i.nombre_producto} (${i.sabor})` : i.nombre_producto,
           quantity: i.cantidad,
           unit_price: i.precio_unitario,
           currency_id: "ARS",

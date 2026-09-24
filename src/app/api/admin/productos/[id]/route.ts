@@ -39,6 +39,7 @@ export async function PUT(
       stock: body.stock,
       activo: body.activo,
       destacado: body.destacado ?? false,
+      sabores: body.sabores?.length ? body.sabores : null,
     })
     .eq("id", id)
     .select()
