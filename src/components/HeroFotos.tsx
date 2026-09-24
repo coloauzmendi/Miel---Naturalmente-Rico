@@ -14,36 +14,69 @@ import hero10 from "@/img/hero-10.jpeg";
 type Foto = {
   imagen: StaticImageData;
   alt: string;
+  // Fotos que en el celular no se muestran (se ven mejor en pantalla ancha).
+  ocultaEnMovil?: boolean;
+  // Clases extra para esta foto puntual (ej: rotarla un poco en el celular).
+  claseExtra?: string;
 };
 
 const fotos: Foto[] = [
   { imagen: hero2, alt: "Producto casero de Miel" },
   { imagen: hero3, alt: "Producto casero de Miel" },
-  { imagen: hero4, alt: "Producto casero de Miel" },
-  { imagen: hero6, alt: "Producto casero de Miel" },
+  {
+    imagen: hero4,
+    alt: "Producto casero de Miel",
+    // Solo en el celular: rotada un poco hacia la izquierda.
+    claseExtra: "-rotate-90 scale-[2.2] md:rotate-0 md:scale-100",
+  },
+  { imagen: hero6, alt: "Producto casero de Miel", ocultaEnMovil: true },
   { imagen: hero7, alt: "Producto casero de Miel" },
-  { imagen: hero8, alt: "Producto casero de Miel" },
+  { imagen: hero8, alt: "Producto casero de Miel", ocultaEnMovil: true },
   { imagen: hero10, alt: "Producto casero de Miel" },
 ];
 
 const DURACION = 5000;
 
 export default function HeroFotos({ children }: { children: ReactNode }) {
+  const [esMovil, setEsMovil] = useState(false);
   const [indice, setIndice] = useState(0);
   const inicioToque = useRef<number | null>(null);
+
+  // Detecta el tamaño de pantalla en el navegador (en el server todavía no
+  // se sabe), para armar la lista de fotos que corresponde.
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const actualizar = () => setEsMovil(mediaQuery.matches);
+    actualizar();
+    mediaQuery.addEventListener("change", actualizar);
+    return () => mediaQuery.removeEventListener("change", actualizar);
+  }, []);
+
+  const fotosVisibles = esMovil
+    ? fotos.filter((foto) => !foto.ocultaEnMovil)
+    : fotos;
+
+  // Si cambia la cantidad de fotos disponibles (por ejemplo al girar el
+  // celular cruzando el breakpoint), volvemos a arrancar del principio.
+  useEffect(() => {
+    setIndice(0);
+  }, [fotosVisibles.length]);
 
   // Se reinicia en cada cambio para que, al tocar una flecha, la próxima
   // foto espere el tiempo completo.
   useEffect(() => {
     const temporizador = window.setTimeout(() => {
-      setIndice((actual) => (actual + 1) % fotos.length);
+      setIndice((actual) => (actual + 1) % fotosVisibles.length);
     }, DURACION);
     return () => window.clearTimeout(temporizador);
-  }, [indice]);
+  }, [indice, fotosVisibles.length]);
 
   const anterior = () =>
-    setIndice((actual) => (actual - 1 + fotos.length) % fotos.length);
-  const siguiente = () => setIndice((actual) => (actual + 1) % fotos.length);
+    setIndice(
+      (actual) => (actual - 1 + fotosVisibles.length) % fotosVisibles.length,
+    );
+  const siguiente = () =>
+    setIndice((actual) => (actual + 1) % fotosVisibles.length);
 
   function cambiarPorGestos(evento: React.TouchEvent<HTMLDivElement>) {
     if (inicioToque.current === null) return;
@@ -72,7 +105,7 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
         }}
         onTouchEnd={cambiarPorGestos}
       >
-        {fotos.map((foto, fotoIndice) => (
+        {fotosVisibles.map((foto, fotoIndice) => (
           <Image
             key={foto.imagen.src}
             src={foto.imagen}
@@ -83,7 +116,7 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
             aria-hidden={fotoIndice !== indice}
             className={`object-cover transition-opacity duration-1000 ease-in-out ${
               fotoIndice === indice ? "opacity-100" : "opacity-0"
-            }`}
+            } ${foto.claseExtra ?? ""}`}
           />
         ))}
 
@@ -116,7 +149,7 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
         </button>
 
         <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 rounded-full bg-tinta/40 px-2.5 py-1.5 backdrop-blur-sm">
-          {fotos.map((foto, fotoIndice) => (
+          {fotosVisibles.map((foto, fotoIndice) => (
             <button
               key={foto.imagen.src}
               type="button"
