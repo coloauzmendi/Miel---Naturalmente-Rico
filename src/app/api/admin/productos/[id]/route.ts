@@ -28,6 +28,7 @@ export async function PUT(
   }
 
   const body = await request.json();
+  const imagenes: string[] = Array.isArray(body.imagenes) ? body.imagenes : [];
   const { data, error } = await supabase
     .from("productos")
     .update({
@@ -35,7 +36,8 @@ export async function PUT(
       descripcion: body.descripcion,
       precio: body.precio,
       categoria: body.categoria,
-      imagen_url: body.imagen_url || null,
+      imagen_url: imagenes[0] ?? null,
+      imagenes: imagenes.length ? imagenes : null,
       stock: body.stock,
       activo: body.activo,
       destacado: body.destacado ?? false,

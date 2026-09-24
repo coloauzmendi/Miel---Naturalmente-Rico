@@ -57,6 +57,15 @@ export default function AdminPedidosClient({
               <p className="text-sm text-tinta/70">
                 {pedido.telefono_contacto} · {pedido.direccion_entrega}
               </p>
+              <span
+                className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                  pedido.metodo_pago === "efectivo"
+                    ? "bg-dorado/20 text-dorado-oscuro"
+                    : "bg-oliva/15 text-oliva"
+                }`}
+              >
+                {pedido.metodo_pago === "efectivo" ? "Efectivo" : "Mercado Pago"}
+              </span>
               {pedido.notas && <p className="text-sm text-tinta/50">Nota: {pedido.notas}</p>}
             </div>
 

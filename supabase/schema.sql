@@ -51,6 +51,9 @@ create table if not exists public.productos (
   precio integer not null check (precio >= 0),
   categoria text not null check (categoria in ('almuerzos-cenas', 'desayunos-meriendas')),
   imagen_url text,
+  -- Todas las fotos del producto, en orden. imagen_url queda como la
+  -- portada (la primera) para lo que todavía la use.
+  imagenes text[],
   stock integer not null default 0,
   activo boolean not null default true,
   destacado boolean not null default false,
@@ -105,6 +108,9 @@ create table if not exists public.pedidos (
   notas text,
   mp_preference_id text,
   mp_payment_id text,
+  metodo_pago text not null default 'mercadopago' check (
+    metodo_pago in ('mercadopago', 'efectivo')
+  ),
   created_at timestamptz not null default now()
 );
 

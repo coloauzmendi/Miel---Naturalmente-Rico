@@ -28,6 +28,27 @@ export default function Navbar() {
     { href: "/#contacto", label: "Contacto" },
   ];
 
+  // Scrollea a mano, midiendo la altura real del header en ese momento, en
+  // vez de confiar en un margen fijo: así no importa si el header cambia de
+  // tamaño o si el navegador calcula distinto el "scroll-margin-top" nativo.
+  function irASeccion(evento: React.MouseEvent<HTMLAnchorElement>, href: string) {
+    if (!href.startsWith("/#")) return;
+    if (window.location.pathname !== "/") return;
+
+    const id = href.slice(2);
+    const seccion = document.getElementById(id);
+    if (!seccion) return;
+
+    evento.preventDefault();
+    const header = document.querySelector("header");
+    const alturaHeader = header?.getBoundingClientRect().height ?? 0;
+    const y = seccion.getBoundingClientRect().top + window.scrollY - alturaHeader;
+
+    window.scrollTo({ top: y, behavior: "smooth" });
+    window.history.pushState(null, "", href);
+    evento.currentTarget.closest("details")?.removeAttribute("open");
+  }
+
   return (
     <div className="relative z-40">
       <header className="sticky top-0 z-40 h-[var(--nav-h)] border-b border-marron bg-marron/95 text-crema-alta backdrop-blur">
@@ -47,6 +68,7 @@ export default function Navbar() {
               <a
                 key={enlace.href}
                 href={enlace.href}
+                onClick={(e) => irASeccion(e, enlace.href)}
                 className="transition-colors hover:text-dorado"
               >
                 {enlace.label}
@@ -86,7 +108,12 @@ export default function Navbar() {
                 className="menu-movil-panel flex flex-col gap-1 border-t border-marron bg-marron px-5 py-3 font-sans text-sm text-crema-alta shadow-lg"
               >
                 {enlaces.map((enlace) => (
-                  <a key={enlace.href} href={enlace.href} className="py-3">
+                  <a
+                    key={enlace.href}
+                    href={enlace.href}
+                    onClick={(e) => irASeccion(e, enlace.href)}
+                    className="py-3"
+                  >
                     {enlace.label}
                   </a>
                 ))}

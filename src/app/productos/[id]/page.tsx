@@ -4,6 +4,7 @@ import { obtenerProductoPorId } from "@/lib/productos";
 import { formatearPrecio } from "@/lib/formato";
 import { etiquetaCategoria } from "@/lib/categorias";
 import BotonAgregar from "@/components/BotonAgregar";
+import GaleriaProducto from "@/components/GaleriaProducto";
 import { Clock3, MessageCircle, Snowflake } from "lucide-react";
 
 export default async function ProductoDetalle({
@@ -19,20 +20,10 @@ export default async function ProductoDetalle({
   return (
     <div className="mx-auto max-w-5xl px-5 py-14">
       <div className="grid gap-10 md:grid-cols-2">
-        <div className="aspect-square overflow-hidden rounded-2xl border border-linea bg-crema-alta">
-          {producto.imagen_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={producto.imagen_url}
-              alt={producto.nombre}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-oliva/40">
-              <span className="font-display text-2xl">Miel</span>
-            </div>
-          )}
-        </div>
+        <GaleriaProducto
+          imagenes={producto.imagenes ?? (producto.imagen_url ? [producto.imagen_url] : [])}
+          nombre={producto.nombre}
+        />
 
         <div>
           <Link
@@ -72,11 +63,9 @@ export default async function ProductoDetalle({
             <BotonAgregar producto={producto} />
           </div>
 
-          <p className="mt-4 text-sm text-tinta/50">
-            {producto.stock > 0
-              ? `${producto.stock} unidades disponibles`
-              : "Sin stock por el momento"}
-          </p>
+          {producto.stock <= 0 && (
+            <p className="mt-4 text-sm text-tinta/50">Sin stock por el momento</p>
+          )}
           <a
             href={`https://wa.me/5493413456530?text=${encodeURIComponent(`Hola, quiero consultar por ${producto.nombre}`)}`}
             target="_blank"

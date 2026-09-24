@@ -96,11 +96,13 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
           </div>
         </div>
 
+        {/* En el celular las flechas quedaban arriba del texto centrado;
+            en pantallas chicas alcanza con deslizar el dedo (swipe). */}
         <button
           type="button"
           onClick={anterior}
           aria-label="Foto anterior"
-          className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-crema-alta/20 text-crema-alta backdrop-blur-sm transition-colors hover:bg-crema-alta/35 md:left-6 md:h-12 md:w-12"
+          className="absolute left-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-crema-alta/20 text-crema-alta backdrop-blur-sm transition-colors hover:bg-crema-alta/35 md:flex md:left-6 md:h-12 md:w-12"
         >
           <ChevronLeft size={22} />
         </button>
@@ -108,7 +110,7 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
           type="button"
           onClick={siguiente}
           aria-label="Foto siguiente"
-          className="absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-crema-alta/20 text-crema-alta backdrop-blur-sm transition-colors hover:bg-crema-alta/35 md:right-6 md:h-12 md:w-12"
+          className="absolute right-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-crema-alta/20 text-crema-alta backdrop-blur-sm transition-colors hover:bg-crema-alta/35 md:flex md:right-6 md:h-12 md:w-12"
         >
           <ChevronRight size={22} />
         </button>

@@ -23,6 +23,8 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const items: ItemRecibido[] = body.items;
   const { direccion_entrega, telefono_contacto, notas } = body;
+  const metodo_pago: "mercadopago" | "efectivo" =
+    body.metodo_pago === "efectivo" ? "efectivo" : "mercadopago";
 
   if (!Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ error: "El carrito está vacío." }, { status: 400 });
@@ -46,6 +48,7 @@ export async function POST(request: NextRequest) {
       direccion_entrega,
       telefono_contacto,
       notas: notas || null,
+      metodo_pago,
     })
     .select()
     .single();
@@ -74,6 +77,12 @@ export async function POST(request: NextRequest) {
       { error: "No pudimos guardar los productos del pedido." },
       { status: 500 }
     );
+  }
+
+  // Pago en efectivo: no hay nada que gestionar con Mercado Pago, el
+  // pedido queda creado y el cliente coordina la entrega por WhatsApp.
+  if (metodo_pago === "efectivo") {
+    return NextResponse.json({ pedido_id: pedido.id });
   }
 
   // Si todavía no configuraste Mercado Pago, devolvemos un link de éxito

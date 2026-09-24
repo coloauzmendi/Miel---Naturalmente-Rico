@@ -4,14 +4,14 @@ import { useState } from "react";
 import { Producto, Categoria } from "@/types";
 import { formatearPrecio } from "@/lib/formato";
 import { CATEGORIAS, etiquetaCategoria } from "@/lib/categorias";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, X } from "lucide-react";
 
 const VACIO = {
   nombre: "",
   descripcion: "",
   precio: 0,
   categoria: "almuerzos-cenas" as Categoria,
-  imagen_url: "",
+  imagenes: [] as string[],
   stock: 0,
   activo: true,
   destacado: false,
@@ -33,27 +33,36 @@ export default function AdminProductosClient({
   const [subiendoImagen, setSubiendoImagen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function subirImagen(archivo: File) {
+  async function subirImagenes(archivos: FileList) {
     setSubiendoImagen(true);
     setError(null);
     try {
-      const datosArchivo = new FormData();
-      datosArchivo.append("archivo", archivo);
-      const res = await fetch("/api/admin/upload-imagen", {
-        method: "POST",
-        body: datosArchivo,
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "No pudimos subir la imagen.");
-        return;
+      for (const archivo of Array.from(archivos)) {
+        const datosArchivo = new FormData();
+        datosArchivo.append("archivo", archivo);
+        const res = await fetch("/api/admin/upload-imagen", {
+          method: "POST",
+          body: datosArchivo,
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error ?? "No pudimos subir una de las imágenes.");
+          continue;
+        }
+        setForm((f) => ({ ...f, imagenes: [...f.imagenes, data.url] }));
       }
-      setForm((f) => ({ ...f, imagen_url: data.url }));
     } catch {
-      setError("Hubo un problema de conexión al subir la imagen.");
+      setError("Hubo un problema de conexión al subir las imágenes.");
     } finally {
       setSubiendoImagen(false);
     }
+  }
+
+  function quitarImagen(indice: number) {
+    setForm((f) => ({
+      ...f,
+      imagenes: f.imagenes.filter((_, i) => i !== indice),
+    }));
   }
 
   function abrirNuevo() {
@@ -69,7 +78,7 @@ export default function AdminProductosClient({
       descripcion: p.descripcion,
       precio: p.precio,
       categoria: p.categoria,
-      imagen_url: p.imagen_url ?? "",
+      imagenes: p.imagenes ?? (p.imagen_url ? [p.imagen_url] : []),
       stock: p.stock,
       activo: p.activo,
       destacado: p.destacado,
@@ -178,22 +187,42 @@ export default function AdminProductosClient({
           />
           <div className="flex flex-col gap-2 sm:col-span-2">
             <label className="text-sm text-tinta">
-              Foto del producto
-              <div className="mt-1 flex flex-wrap items-center gap-3">
-                {form.imagen_url && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={form.imagen_url}
-                    alt=""
-                    className="h-16 w-16 rounded-lg border border-linea object-cover"
-                  />
-                )}
+              Fotos del producto (podés elegir varias)
+              {form.imagenes.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {form.imagenes.map((url, indice) => (
+                    <div key={url} className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt=""
+                        className="h-16 w-16 rounded-lg border border-linea object-cover"
+                      />
+                      {indice === 0 && (
+                        <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 rounded-full bg-marron px-1.5 py-0.5 text-[10px] text-crema-alta">
+                          Portada
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => quitarImagen(indice)}
+                        aria-label="Quitar esta foto"
+                        className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-ciruela text-crema-alta"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="mt-2 flex flex-wrap items-center gap-3">
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp,image/gif"
+                  multiple
                   onChange={(e) => {
-                    const archivo = e.target.files?.[0];
-                    if (archivo) subirImagen(archivo);
+                    const archivos = e.target.files;
+                    if (archivos && archivos.length > 0) subirImagenes(archivos);
                     e.target.value = "";
                   }}
                   disabled={subiendoImagen}
@@ -204,12 +233,11 @@ export default function AdminProductosClient({
                 )}
               </div>
             </label>
-            <input
-              placeholder="O pegá una URL de imagen"
-              value={form.imagen_url}
-              onChange={(e) => setForm({ ...form, imagen_url: e.target.value })}
-              className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
-            />
+            <span className="text-xs text-tinta/50">
+              La primera foto de la lista es la que se usa como portada. Para
+              cambiar el orden, quitá las que no correspondan y volvé a
+              subirlas en el orden que quieras.
+            </span>
           </div>
           <label className="text-sm text-tinta sm:col-span-2">
             Sabores u opciones (opcional, separados por coma)

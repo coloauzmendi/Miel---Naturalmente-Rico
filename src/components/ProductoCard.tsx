@@ -1,31 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Producto } from "@/types";
 import { formatearPrecio } from "@/lib/formato";
 import { useCarrito } from "@/components/CarritoContext";
 import { etiquetaCategoria } from "@/lib/categorias";
 import { Plus, Sun, Moon } from "lucide-react";
 
+const DURACION_ROTACION = 3000;
+
 export default function ProductoCard({ producto }: { producto: Producto }) {
+  const router = useRouter();
   const { agregar } = useCarrito();
   const [agregado, setAgregado] = useState(false);
+  const [avisoSabor, setAvisoSabor] = useState(false);
   const sinStock = producto.stock <= 0;
   const tieneSabores = (producto.sabores?.length ?? 0) > 0;
+
+  const imagenes =
+    producto.imagenes ?? (producto.imagen_url ? [producto.imagen_url] : []);
+  const [indiceFoto, setIndiceFoto] = useState(0);
+
+  useEffect(() => {
+    if (imagenes.length <= 1) return;
+    const temporizador = window.setInterval(() => {
+      setIndiceFoto((i) => (i + 1) % imagenes.length);
+    }, DURACION_ROTACION);
+    return () => window.clearInterval(temporizador);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo depende de cuántas fotos hay, no de su contenido
+  }, [imagenes.length]);
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-linea bg-crema-alta transition-shadow hover:shadow-[0_8px_24px_-8px_rgba(43,36,32,0.25)]">
       <Link
         href={`/productos/${producto.id}`}
-        className="block aspect-[4/3] overflow-hidden bg-linea/60"
+        className="relative block aspect-[4/3] overflow-hidden bg-linea/60"
       >
-        {producto.imagen_url ? (
-          <img
-            src={producto.imagen_url}
-            alt={producto.nombre}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
+        {imagenes.length > 0 ? (
+          imagenes.map((url, i) => (
+            <img
+              key={url}
+              src={url}
+              alt={producto.nombre}
+              className={`absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-in-out group-hover:scale-105 ${
+                i === indiceFoto ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          ))
         ) : (
           <div className="flex h-full w-full items-center justify-center text-oliva/40">
             <span className="font-display text-lg">Miel</span>
@@ -71,13 +94,16 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
               Sin stock
             </button>
           ) : tieneSabores ? (
-            <Link
-              href={`/productos/${producto.id}`}
-              className="flex items-center gap-1 rounded-full bg-oliva px-3 py-2 text-sm text-crema-alta transition-colors hover:bg-oliva-claro"
+            <button
+              onClick={() => {
+                setAvisoSabor(true);
+                window.setTimeout(() => router.push(`/productos/${producto.id}`), 900);
+              }}
+              className="flex items-center gap-1 rounded-full bg-oliva px-3 py-2 text-center text-sm text-crema-alta transition-colors hover:bg-oliva-claro"
             >
               <Plus size={16} />
-              Elegir
-            </Link>
+              {avisoSabor ? "¡Entrá y elegí el sabor!" : "Elegir"}
+            </button>
           ) : (
             <button
               onClick={() => {

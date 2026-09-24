@@ -7,6 +7,8 @@ export interface Producto {
   precio: number; // en ARS, guardado en centavos evitado por simplicidad -> pesos enteros
   categoria: Categoria;
   imagen_url: string | null;
+  // Todas las fotos del producto, en orden. imagen_url es la primera.
+  imagenes: string[] | null;
   stock: number;
   activo: boolean;
   destacado: boolean;
@@ -34,6 +36,7 @@ export interface Pedido {
   notas: string | null;
   mp_preference_id: string | null;
   mp_payment_id: string | null;
+  metodo_pago: "mercadopago" | "efectivo";
   created_at: string;
 }
 

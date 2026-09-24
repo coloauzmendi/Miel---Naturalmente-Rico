@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
+  const imagenes: string[] = Array.isArray(body.imagenes) ? body.imagenes : [];
   const { data, error } = await supabase
     .from("productos")
     .insert({
@@ -31,7 +32,8 @@ export async function POST(request: NextRequest) {
       descripcion: body.descripcion,
       precio: body.precio,
       categoria: body.categoria,
-      imagen_url: body.imagen_url || null,
+      imagen_url: imagenes[0] ?? null,
+      imagenes: imagenes.length ? imagenes : null,
       stock: body.stock,
       activo: body.activo ?? true,
       destacado: body.destacado ?? false,

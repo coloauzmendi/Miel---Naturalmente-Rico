@@ -13,7 +13,9 @@ export default function CheckoutPage() {
   const { items, total, vaciar } = useCarrito();
   const [usuario, setUsuario] = useState<User | null>(null);
   const [cargandoSesion, setCargandoSesion] = useState(true);
-  const [enviando, setEnviando] = useState(false);
+  const [enviando, setEnviando] = useState<"mercadopago" | "efectivo" | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
 
   const [direccion, setDireccion] = useState("");
@@ -60,13 +62,37 @@ export default function CheckoutPage() {
     );
   }
 
-  async function confirmarPedido() {
+  function armarMensajeEfectivo(pedidoId: string) {
+    const codigo = pedidoId.slice(0, 8).toUpperCase();
+    const detalle = items
+      .map(
+        (i) =>
+          `${i.cantidad}x ${i.producto.nombre}${i.sabor ? ` (${i.sabor})` : ""} - ${formatearPrecio(i.producto.precio * i.cantidad)}`,
+      )
+      .join("\n");
+
+    // Los emojis van como código Unicode (\u{...}) en vez del carácter
+    // directo: así no dependen de cómo el editor o el compilador guarden
+    // el archivo, y no se rompen en tránsito hacia WhatsApp.
+    const canasta = "\u{1F9FA}"; // 🧺
+    const dinero = "\u{1F4B0}"; // 💰
+    const pin = "\u{1F4CD}"; // 📍
+
+    return (
+      `Hola! Quiero confirmar mi pedido #${codigo} para pagar en efectivo.\n\n` +
+      `${canasta} Pedido:\n${detalle}\n\n` +
+      `${dinero} Total: ${formatearPrecio(total)}\n` +
+      `${pin} Entrega: ${direccion}`
+    );
+  }
+
+  async function confirmarPedido(metodoPago: "mercadopago" | "efectivo") {
     setError(null);
     if (!direccion.trim() || !telefono.trim()) {
       setError("Completá la dirección y el teléfono de contacto.");
       return;
     }
-    setEnviando(true);
+    setEnviando(metodoPago);
     try {
       const respuesta = await fetch("/api/checkout", {
         method: "POST",
@@ -82,6 +108,7 @@ export default function CheckoutPage() {
           direccion_entrega: direccion,
           telefono_contacto: telefono,
           notas,
+          metodo_pago: metodoPago,
         }),
       });
 
@@ -89,7 +116,18 @@ export default function CheckoutPage() {
 
       if (!respuesta.ok) {
         setError(datos.error ?? "No pudimos iniciar el pago. Probá de nuevo.");
-        setEnviando(false);
+        setEnviando(null);
+        return;
+      }
+
+      if (metodoPago === "efectivo") {
+        const mensaje = armarMensajeEfectivo(datos.pedido_id);
+        window.open(
+          `https://wa.me/5493413456530?text=${encodeURIComponent(mensaje)}`,
+          "_blank",
+        );
+        vaciar();
+        router.push(`/checkout/exito?pedido=${datos.pedido_id}&efectivo=1`);
         return;
       }
 
@@ -97,7 +135,7 @@ export default function CheckoutPage() {
       window.location.href = datos.init_point;
     } catch {
       setError("Hubo un problema de conexión. Probá de nuevo.");
-      setEnviando(false);
+      setEnviando(null);
     }
   }
 
@@ -153,14 +191,27 @@ export default function CheckoutPage() {
           {error && <p className="text-sm text-ciruela">{error}</p>}
 
           <button
-            onClick={confirmarPedido}
-            disabled={enviando}
+            onClick={() => confirmarPedido("mercadopago")}
+            disabled={enviando !== null}
             className="mt-2 rounded-full bg-boton px-6 py-3 text-sm font-medium text-tinta hover:bg-boton-oscuro disabled:opacity-60"
           >
-            {enviando
+            {enviando === "mercadopago"
               ? "Redirigiendo a Mercado Pago…"
               : "Pagar con Mercado Pago"}
           </button>
+
+          <button
+            onClick={() => confirmarPedido("efectivo")}
+            disabled={enviando !== null}
+            className="rounded-full border border-oliva px-6 py-3 text-sm font-medium text-oliva hover:bg-oliva hover:text-crema-alta disabled:opacity-60"
+          >
+            {enviando === "efectivo"
+              ? "Abriendo WhatsApp…"
+              : "Pagar en efectivo"}
+          </button>
+          <p className="-mt-2 text-xs text-tinta/50">
+            Coordinás el pago en efectivo por WhatsApp al recibir tu pedido.
+          </p>
         </div>
 
         <div className="h-fit rounded-2xl border border-linea bg-crema-alta p-5 md:sticky md:top-24">

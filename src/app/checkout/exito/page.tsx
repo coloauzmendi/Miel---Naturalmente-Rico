@@ -4,9 +4,14 @@ import { CheckCircle2 } from "lucide-react";
 export default async function CheckoutExito({
   searchParams,
 }: {
-  searchParams: Promise<{ pedido?: string; pendiente?: string; demo?: string }>;
+  searchParams: Promise<{
+    pedido?: string;
+    pendiente?: string;
+    demo?: string;
+    efectivo?: string;
+  }>;
 }) {
-  const { pendiente, demo } = await searchParams;
+  const { pendiente, demo, efectivo } = await searchParams;
 
   return (
     <div className="mx-auto max-w-lg px-5 py-24 text-center">
@@ -15,9 +20,11 @@ export default async function CheckoutExito({
         {pendiente ? "Tu pago está en revisión" : "¡Gracias por tu pedido!"}
       </h1>
       <p className="mt-3 text-tinta/70">
-        {pendiente
-          ? "Te avisamos apenas se confirme el pago."
-          : "Ya recibimos tu pedido y te vamos a avisar cuando esté en preparación."}
+        {efectivo
+          ? "Ya te escribimos un mensaje armado en WhatsApp: mandalo para confirmar tu pedido y coordinar el pago en efectivo."
+          : pendiente
+            ? "Te avisamos apenas se confirme el pago."
+            : "Ya recibimos tu pedido y te vamos a avisar cuando esté en preparación."}
       </p>
       {demo && (
         <p className="mt-3 rounded-lg bg-crema-alta p-3 text-sm text-dorado-oscuro">

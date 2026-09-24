@@ -55,7 +55,7 @@ export default async function Home() {
             Ver productos
           </a>
           <a
-            href="https://wa.me/5493410000000"
+            href="https://wa.me/5493413456530"
             className="rounded-full border border-crema-alta/50 bg-crema-alta/10 px-6 py-3 text-sm font-medium text-crema-alta backdrop-blur-sm transition-colors hover:bg-crema-alta/20"
           >
             Consultar por WhatsApp

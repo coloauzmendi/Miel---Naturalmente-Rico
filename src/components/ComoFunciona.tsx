@@ -55,7 +55,7 @@ export default function ComoFunciona() {
   return (
     <section
       id="como-funciona"
-      className="scroll-mt-[calc(var(--nav-h)_+_1rem)] border-y border-linea bg-crema-alta"
+      className="scroll-mt-[var(--nav-h)] border-y border-linea bg-crema-alta"
     >
       <div className="mx-auto max-w-6xl px-5 py-14 sm:py-16">
         <div className="max-w-xl">
