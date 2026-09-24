@@ -16,19 +16,12 @@ type Foto = {
   alt: string;
   // Fotos que en el celular no se muestran (se ven mejor en pantalla ancha).
   ocultaEnMovil?: boolean;
-  // Clases extra para esta foto puntual (ej: rotarla un poco en el celular).
-  claseExtra?: string;
 };
 
 const fotos: Foto[] = [
   { imagen: hero2, alt: "Producto casero de Miel" },
   { imagen: hero3, alt: "Producto casero de Miel" },
-  {
-    imagen: hero4,
-    alt: "Producto casero de Miel",
-    // Solo en el celular: rotada un poco hacia la izquierda.
-    claseExtra: "-rotate-90 scale-[1.2] md:rotate-0",
-  },
+  { imagen: hero4, alt: "Producto casero de Miel" },
   { imagen: hero6, alt: "Producto casero de Miel", ocultaEnMovil: true },
   { imagen: hero7, alt: "Producto casero de Miel" },
   { imagen: hero8, alt: "Producto casero de Miel", ocultaEnMovil: true },
@@ -116,7 +109,7 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
             aria-hidden={fotoIndice !== indice}
             className={`object-cover transition-opacity duration-1000 ease-in-out ${
               fotoIndice === indice ? "opacity-100" : "opacity-0"
-            } ${foto.claseExtra ?? ""}`}
+            }`}
           />
         ))}
 
