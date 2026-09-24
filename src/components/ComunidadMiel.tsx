@@ -35,6 +35,11 @@ export default function ComunidadMiel() {
     const elemento = contenedorRef.current;
     if (!elemento) return;
 
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
+
     const observador = new IntersectionObserver(
       ([entrada]) => {
         if (entrada.isIntersecting) {
@@ -46,7 +51,15 @@ export default function ComunidadMiel() {
     );
 
     observador.observe(elemento);
-    return () => observador.disconnect();
+
+    // Red de seguridad: si en algún celular el detector nunca dispara,
+    // mostramos igual el contenido en vez de dejarlo invisible para siempre.
+    const resguardo = setTimeout(() => setVisible(true), 4000);
+
+    return () => {
+      observador.disconnect();
+      clearTimeout(resguardo);
+    };
   }, []);
 
   return (
