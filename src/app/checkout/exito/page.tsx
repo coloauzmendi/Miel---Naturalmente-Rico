@@ -9,9 +9,10 @@ export default async function CheckoutExito({
     pendiente?: string;
     demo?: string;
     efectivo?: string;
+    wsp?: string;
   }>;
 }) {
-  const { pendiente, demo, efectivo } = await searchParams;
+  const { pendiente, demo, efectivo, wsp } = await searchParams;
 
   return (
     <div className="mx-auto max-w-lg px-5 py-24 text-center">
@@ -32,9 +33,23 @@ export default async function CheckoutExito({
           MERCADOPAGO_ACCESS_TOKEN en el archivo .env.
         </p>
       )}
+      {efectivo && wsp && (
+        <a
+          href={wsp}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-8 inline-block rounded-full bg-oliva px-6 py-3 text-sm font-medium text-crema-alta hover:bg-oliva-claro"
+        >
+          Abrir WhatsApp
+        </a>
+      )}
       <Link
         href="/cuenta/pedidos"
-        className="mt-8 inline-block rounded-full bg-oliva px-6 py-3 text-sm font-medium text-crema-alta hover:bg-oliva-claro"
+        className={
+          efectivo && wsp
+            ? "mt-4 block text-sm text-tinta/60 underline underline-offset-2 hover:text-tinta"
+            : "mt-8 inline-block rounded-full bg-oliva px-6 py-3 text-sm font-medium text-crema-alta hover:bg-oliva-claro"
+        }
       >
         Ver mis pedidos
       </Link>

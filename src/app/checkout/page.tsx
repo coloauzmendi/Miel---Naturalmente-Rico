@@ -93,6 +93,13 @@ export default function CheckoutPage() {
       return;
     }
     setEnviando(metodoPago);
+
+    // Abrimos la pestaña ACÁ, todavía dentro del toque del usuario: si la
+    // abrimos después del await de más abajo, el celular la bloquea porque
+    // ya no la considera una acción directa de la persona.
+    const ventanaWsp =
+      metodoPago === "efectivo" ? window.open("", "_blank") : null;
+
     try {
       const respuesta = await fetch("/api/checkout", {
         method: "POST",
@@ -115,6 +122,7 @@ export default function CheckoutPage() {
       const datos = await respuesta.json();
 
       if (!respuesta.ok) {
+        ventanaWsp?.close();
         setError(datos.error ?? "No pudimos iniciar el pago. Probá de nuevo.");
         setEnviando(null);
         return;
@@ -122,18 +130,23 @@ export default function CheckoutPage() {
 
       if (metodoPago === "efectivo") {
         const mensaje = armarMensajeEfectivo(datos.pedido_id);
-        window.open(
-          `https://wa.me/5493413456530?text=${encodeURIComponent(mensaje)}`,
-          "_blank",
-        );
+        const urlWsp = `https://wa.me/5493413456530?text=${encodeURIComponent(mensaje)}`;
+
+        if (ventanaWsp) {
+          ventanaWsp.location.href = urlWsp;
+        }
+
         vaciar();
-        router.push(`/checkout/exito?pedido=${datos.pedido_id}&efectivo=1`);
+        router.push(
+          `/checkout/exito?pedido=${datos.pedido_id}&efectivo=1&wsp=${encodeURIComponent(urlWsp)}`,
+        );
         return;
       }
 
       vaciar();
       window.location.href = datos.init_point;
     } catch {
+      ventanaWsp?.close();
       setError("Hubo un problema de conexión. Probá de nuevo.");
       setEnviando(null);
     }
