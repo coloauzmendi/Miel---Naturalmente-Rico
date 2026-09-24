@@ -7,9 +7,25 @@ import CarritoFlotante from "@/components/CarritoFlotante";
 import Marquee from "@/components/Marquee";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://miel-naturalmente-rico.vercel.app"),
   title: "Miel, naturalmente rico | Comida casera cocida y congelada",
   description:
     "Alimentos cocidos y congelados, sin conservantes ni aditivos. Pedí online y recibí en tu casa.",
+  openGraph: {
+    title: "Miel, naturalmente rico",
+    description:
+      "Alimentos cocidos y congelados, sin conservantes ni aditivos. Pedí online y recibí en tu casa.",
+    url: "https://miel-naturalmente-rico.vercel.app",
+    siteName: "Miel, naturalmente rico",
+    locale: "es_AR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Miel, naturalmente rico",
+    description:
+      "Alimentos cocidos y congelados, sin conservantes ni aditivos. Pedí online y recibí en tu casa.",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
