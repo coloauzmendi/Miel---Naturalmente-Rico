@@ -1,19 +1,14 @@
 "use client";
 
-import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") ?? "/";
-
+export default function OlvideContrasenaPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [cargando, setCargando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
 
   async function manejarSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -21,21 +16,39 @@ function LoginForm() {
     setCargando(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/cuenta/restablecer-contrasena`,
+    });
 
     if (error) {
-      setError("Email o contraseña incorrectos.");
+      setError("No pudimos enviar el email. Probá de nuevo.");
       setCargando(false);
       return;
     }
 
-    router.push(redirect);
-    router.refresh();
+    setEnviado(true);
+    setCargando(false);
+  }
+
+  if (enviado) {
+    return (
+      <div className="mx-auto max-w-sm px-5 py-20 text-center">
+        <h1 className="font-display text-2xl text-tinta">Revisá tu email</h1>
+        <p className="mt-3 text-tinta/70">
+          Si existe una cuenta con ese email, te enviamos un link para elegir
+          una contraseña nueva.
+        </p>
+      </div>
+    );
   }
 
   return (
     <div className="mx-auto max-w-sm px-5 py-20">
-      <h1 className="font-display text-3xl text-tinta">Ingresá a tu cuenta</h1>
+      <h1 className="font-display text-3xl text-tinta">Recuperar contraseña</h1>
+      <p className="mt-3 text-sm text-tinta/70">
+        Ingresá tu email y te mandamos un link para elegir una contraseña
+        nueva.
+      </p>
       <form onSubmit={manejarSubmit} className="mt-8 flex flex-col gap-4">
         <label className="text-sm font-medium text-tinta">
           Email
@@ -47,16 +60,6 @@ function LoginForm() {
             className="mt-1 w-full rounded-lg border border-linea bg-crema-alta px-3 py-2 text-sm outline-none focus:border-oliva"
           />
         </label>
-        <label className="text-sm font-medium text-tinta">
-          Contraseña
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-linea bg-crema-alta px-3 py-2 text-sm outline-none focus:border-oliva"
-          />
-        </label>
 
         {error && <p className="text-sm text-ciruela">{error}</p>}
 
@@ -65,34 +68,18 @@ function LoginForm() {
           disabled={cargando}
           className="mt-2 rounded-full bg-oliva px-6 py-3 text-sm font-medium text-crema-alta hover:bg-oliva-claro disabled:opacity-60"
         >
-          {cargando ? "Ingresando…" : "Ingresar"}
+          {cargando ? "Enviando…" : "Enviar link"}
         </button>
-
-        <Link
-          href="/cuenta/olvide-contrasena"
-          className="text-center text-sm text-tinta/70 underline underline-offset-4 hover:text-tinta"
-        >
-          ¿Olvidaste tu contraseña?
-        </Link>
       </form>
 
       <p className="mt-6 text-sm text-tinta/70">
-        ¿No tenés cuenta?{" "}
         <Link
-          href={`/cuenta/registro?redirect=${encodeURIComponent(redirect)}`}
+          href="/cuenta/login"
           className="text-ciruela underline underline-offset-4"
         >
-          Creá una acá
+          Volver a ingresar
         </Link>
       </p>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
   );
 }
