@@ -143,7 +143,11 @@ export async function POST(request: NextRequest) {
   });
   const preference = new Preference(client);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  // Sin barra final: "https://sitio.com/" + "/api/..." daría "//api/...",
+  // que redirige, y Mercado Pago no sigue redirecciones al avisar pagos.
+  const siteUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ).replace(/\/+$/, "");
 
   try {
     const resultado = await preference.create({
