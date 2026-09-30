@@ -39,7 +39,9 @@ export async function POST(request: NextRequest) {
     const nuevoEstado =
       payment.status === "approved" && montoCorrecto
         ? "pagado"
-        : payment.status === "rejected"
+        : ["rejected", "cancelled", "refunded", "charged_back"].includes(
+              payment.status ?? ""
+            )
           ? "cancelado"
           : "pendiente_pago";
 
