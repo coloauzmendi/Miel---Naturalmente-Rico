@@ -107,8 +107,6 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: items.map((i) => ({
             producto_id: i.producto.id,
-            nombre_producto: i.producto.nombre,
-            precio_unitario: i.producto.precio,
             cantidad: i.cantidad,
             sabor: i.sabor,
           })),
@@ -143,7 +141,8 @@ export default function CheckoutPage() {
         return;
       }
 
-      vaciar();
+      // El carrito se vacía recién en /checkout/exito, por si la persona
+      // vuelve de Mercado Pago sin pagar.
       window.location.href = datos.init_point;
     } catch {
       ventanaWsp?.close();

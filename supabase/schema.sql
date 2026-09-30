@@ -121,9 +121,8 @@ create policy "Los usuarios ven sus propios pedidos"
   on public.pedidos for select
   using (auth.uid() = user_id);
 
-create policy "Los usuarios crean sus propios pedidos"
-  on public.pedidos for insert
-  with check (auth.uid() = user_id);
+-- No hay política de insert para usuarios: los pedidos los crea solo
+-- /api/checkout con la service key, calculando los precios en el servidor.
 
 create policy "Los admins ven todos los pedidos"
   on public.pedidos for select
@@ -156,15 +155,6 @@ alter table public.pedido_items enable row level security;
 create policy "Los usuarios ven items de sus propios pedidos"
   on public.pedido_items for select
   using (
-    exists (
-      select 1 from public.pedidos
-      where pedidos.id = pedido_items.pedido_id and pedidos.user_id = auth.uid()
-    )
-  );
-
-create policy "Los usuarios crean items en sus propios pedidos"
-  on public.pedido_items for insert
-  with check (
     exists (
       select 1 from public.pedidos
       where pedidos.id = pedido_items.pedido_id and pedidos.user_id = auth.uid()

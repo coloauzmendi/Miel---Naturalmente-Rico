@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
+import type { Producto } from "@/types";
 
+// Del navegador solo aceptamos qué productos y cuántos: el nombre y el
+// precio se sacan siempre de la base, así nadie puede pagar menos
+// modificando lo que manda su navegador.
 interface ItemRecibido {
   producto_id: string;
-  nombre_producto: string;
-  precio_unitario: number;
   cantidad: number;
   sabor?: string | null;
 }
@@ -36,10 +38,59 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const total = items.reduce((acc, i) => acc + i.precio_unitario * i.cantidad, 0);
+  // Los pedidos se crean con la service key: los usuarios ya no tienen
+  // permiso para insertarlos directo (ver migración pedidos-solo-servidor).
+  const admin = createServiceClient();
+
+  const { data: productos } = await admin
+    .from("productos")
+    .select("*")
+    .in("id", items.map((i) => i.producto_id))
+    .eq("activo", true);
+
+  const itemsPedido = [];
+  for (const i of items) {
+    const producto = (productos as Producto[] | null)?.find(
+      (p) => p.id === i.producto_id
+    );
+    if (!producto || !Number.isInteger(i.cantidad) || i.cantidad < 1) {
+      return NextResponse.json(
+        { error: "Algún producto del carrito ya no está disponible. Revisá tu carrito." },
+        { status: 400 }
+      );
+    }
+
+    const sabores = producto.sabores ?? [];
+    let precio = producto.precio;
+    let sabor: string | null = null;
+    if (sabores.length > 0) {
+      const elegido = sabores.find((s) => s.nombre === i.sabor);
+      if (!elegido) {
+        return NextResponse.json(
+          { error: `Elegí un sabor válido para ${producto.nombre}.` },
+          { status: 400 }
+        );
+      }
+      precio = elegido.precio;
+      sabor = elegido.nombre;
+    }
+
+    itemsPedido.push({
+      producto_id: producto.id,
+      nombre_producto: producto.nombre,
+      precio_unitario: precio,
+      cantidad: i.cantidad,
+      sabor,
+    });
+  }
+
+  const total = itemsPedido.reduce(
+    (acc, i) => acc + i.precio_unitario * i.cantidad,
+    0
+  );
 
   // 1. Crear el pedido en estado "pendiente_pago"
-  const { data: pedido, error: errorPedido } = await supabase
+  const { data: pedido, error: errorPedido } = await admin
     .from("pedidos")
     .insert({
       user_id: user.id,
@@ -61,16 +112,9 @@ export async function POST(request: NextRequest) {
   }
 
   // 2. Guardar los items del pedido
-  const { error: errorItems } = await supabase.from("pedido_items").insert(
-    items.map((i) => ({
-      pedido_id: pedido.id,
-      producto_id: i.producto_id,
-      nombre_producto: i.nombre_producto,
-      precio_unitario: i.precio_unitario,
-      cantidad: i.cantidad,
-      sabor: i.sabor ?? null,
-    }))
-  );
+  const { error: errorItems } = await admin
+    .from("pedido_items")
+    .insert(itemsPedido.map((i) => ({ ...i, pedido_id: pedido.id })));
 
   if (errorItems) {
     return NextResponse.json(
@@ -104,7 +148,7 @@ export async function POST(request: NextRequest) {
   try {
     const resultado = await preference.create({
       body: {
-        items: items.map((i) => ({
+        items: itemsPedido.map((i) => ({
           id: i.producto_id,
           title: i.sabor ? `${i.nombre_producto} (${i.sabor})` : i.nombre_producto,
           quantity: i.cantidad,
@@ -123,7 +167,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await supabase
+    await admin
       .from("pedidos")
       .update({ mp_preference_id: resultado.id })
       .eq("id", pedido.id);

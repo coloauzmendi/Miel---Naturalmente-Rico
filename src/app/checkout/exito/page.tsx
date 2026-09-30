@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
+import VaciarCarrito from "@/components/VaciarCarrito";
 
 export default async function CheckoutExito({
   searchParams,
@@ -16,6 +17,7 @@ export default async function CheckoutExito({
 
   return (
     <div className="mx-auto max-w-lg px-5 py-24 text-center">
+      <VaciarCarrito />
       <CheckCircle2 className="mx-auto text-oliva" size={48} />
       <h1 className="mt-4 font-display text-3xl text-tinta">
         {pendiente ? "Tu pago está en revisión" : "¡Gracias por tu pedido!"}

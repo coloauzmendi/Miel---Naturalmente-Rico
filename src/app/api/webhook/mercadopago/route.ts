@@ -24,14 +24,25 @@ export async function POST(request: NextRequest) {
     const pedidoId = payment.external_reference;
     if (!pedidoId) return NextResponse.json({ ok: true });
 
+    const supabase = createServiceClient();
+
+    const { data: pedido } = await supabase
+      .from("pedidos")
+      .select("total")
+      .eq("id", pedidoId)
+      .single();
+    if (!pedido) return NextResponse.json({ ok: true });
+
+    // Solo lo damos por pagado si se cobró el total completo del pedido.
+    const montoCorrecto = Number(payment.transaction_amount) >= pedido.total;
+
     const nuevoEstado =
-      payment.status === "approved"
+      payment.status === "approved" && montoCorrecto
         ? "pagado"
         : payment.status === "rejected"
           ? "cancelado"
           : "pendiente_pago";
 
-    const supabase = createServiceClient();
     await supabase
       .from("pedidos")
       .update({

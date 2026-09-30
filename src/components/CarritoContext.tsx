@@ -99,6 +99,13 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
 
   function vaciar() {
     setItems([]);
+    // Borramos también lo guardado: si vaciar() corre antes de que el
+    // provider termine de cargar el storage, el carrito viejo volvería.
+    try {
+      localStorage.removeItem(CLAVE_STORAGE);
+    } catch {
+      // storage no disponible: alcanza con el estado vacío
+    }
   }
 
   const total = useMemo(
