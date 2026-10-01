@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { LayoutDashboard } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatearPrecio } from "@/lib/formato";
 import { EstadoPedido } from "@/types";
@@ -47,11 +49,15 @@ export default async function MisPedidosPage() {
 
   if (!user) redirect("/cuenta/login?redirect=/cuenta/pedidos");
 
-  const { data: pedidos } = await supabase
-    .from("pedidos")
-    .select("*, pedido_items(*)")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+  const [{ data: pedidos }, { data: perfil }] = await Promise.all([
+    supabase
+      .from("pedidos")
+      .select("*, pedido_items(*)")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase.from("perfiles").select("rol").eq("id", user.id).maybeSingle(),
+  ]);
+  const esAdmin = perfil?.rol === "admin";
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-14">
@@ -59,6 +65,24 @@ export default async function MisPedidosPage() {
         <h1 className="font-display text-3xl text-tinta">Mis pedidos</h1>
         <CerrarSesionBoton />
       </div>
+
+      {esAdmin && (
+        <Link
+          href="/admin"
+          className="mb-8 flex items-center justify-between gap-3 rounded-2xl bg-oliva p-5 text-crema-alta transition-colors hover:bg-oliva-claro"
+        >
+          <span className="flex items-center gap-3">
+            <LayoutDashboard size={22} />
+            <span>
+              <span className="block font-medium">Panel de administración</span>
+              <span className="block text-sm text-crema-alta/75">
+                Resumen, productos y pedidos de la tienda
+              </span>
+            </span>
+          </span>
+          <span aria-hidden>→</span>
+        </Link>
+      )}
 
       {!pedidos || pedidos.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-linea bg-crema-alta p-10 text-center text-tinta/60">
