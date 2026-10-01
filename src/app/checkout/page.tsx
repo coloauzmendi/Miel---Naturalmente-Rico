@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useCarrito } from "@/components/CarritoContext";
 import { formatearPrecio } from "@/lib/formato";
 import type { User } from "@supabase/supabase-js";
+import { linkWhatsapp } from "@/lib/contacto";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -128,7 +129,7 @@ export default function CheckoutPage() {
 
       if (metodoPago === "efectivo") {
         const mensaje = armarMensajeEfectivo(datos.pedido_id);
-        const urlWsp = `https://wa.me/5493413456530?text=${encodeURIComponent(mensaje)}`;
+        const urlWsp = linkWhatsapp(mensaje);
 
         if (ventanaWsp) {
           ventanaWsp.location.href = urlWsp;

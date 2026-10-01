@@ -6,6 +6,7 @@ import { etiquetaCategoria } from "@/lib/categorias";
 import BotonAgregar from "@/components/BotonAgregar";
 import GaleriaProducto from "@/components/GaleriaProducto";
 import { Clock3, MessageCircle, Snowflake } from "lucide-react";
+import { linkWhatsapp } from "@/lib/contacto";
 
 export default async function ProductoDetalle({
   params,
@@ -69,7 +70,7 @@ export default async function ProductoDetalle({
             <p className="mt-4 text-sm text-tinta/50">Sin stock por el momento</p>
           )}
           <a
-            href={`https://wa.me/5493413456530?text=${encodeURIComponent(`Hola, quiero consultar por ${producto.nombre}`)}`}
+            href={linkWhatsapp(`Hola, quiero consultar por ${producto.nombre}`)}
             target="_blank"
             rel="noreferrer"
             className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-oliva underline-offset-4 hover:underline"

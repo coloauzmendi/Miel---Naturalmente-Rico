@@ -1,4 +1,5 @@
 import { MessageCircle, MapPin } from "lucide-react";
+import { linkWhatsapp, WHATSAPP_TIENDA_VISIBLE } from "@/lib/contacto";
 
 function IconoInstagram({ size = 16 }: { size?: number }) {
   return (
@@ -38,10 +39,10 @@ export default function Footer() {
         <div className="text-sm">
           <p className="mb-3 font-medium">Contacto</p>
           <a
-            href="https://wa.me/5493413456530"
+            href={linkWhatsapp()}
             className="mb-2 flex items-center gap-2 text-crema-alta/80 hover:text-crema-alta"
           >
-            <MessageCircle size={16} /> WhatsApp: 3413 45-6530
+            <MessageCircle size={16} /> WhatsApp: {WHATSAPP_TIENDA_VISIBLE}
           </a>
           <a
             href="https://instagram.com/miel.naturalmenterico/"

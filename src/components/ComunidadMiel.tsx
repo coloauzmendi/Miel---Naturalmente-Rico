@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Heart, MessageCircle, Share2, UtensilsCrossed } from "lucide-react";
+import { linkWhatsapp } from "@/lib/contacto";
 
 const preguntas = [
   {
@@ -132,7 +133,7 @@ export default function ComunidadMiel() {
           }`}
         >
           <a
-            href="https://wa.me/5493413456530?text=Hola!%20Quiero%20contarles%20mi%20experiencia%20con%20Miel"
+            href={linkWhatsapp("Hola! Quiero contarles mi experiencia con Miel")}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-oliva px-6 py-3 text-sm font-medium text-crema-alta transition-colors hover:bg-oliva-claro"

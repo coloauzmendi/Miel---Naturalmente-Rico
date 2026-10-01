@@ -7,6 +7,7 @@ import HeroFotos from "@/components/HeroFotos";
 import ComoFunciona from "@/components/ComoFunciona";
 import ComunidadMiel from "@/components/ComunidadMiel";
 import { Leaf, Snowflake, ShieldCheck } from "lucide-react";
+import { linkWhatsapp } from "@/lib/contacto";
 
 export default async function Home() {
   const productos = await obtenerProductos();
@@ -55,7 +56,7 @@ export default async function Home() {
             Ver productos
           </a>
           <a
-            href="https://wa.me/5493413456530"
+            href={linkWhatsapp()}
             className="rounded-full border border-crema-alta/50 bg-crema-alta/10 px-6 py-3 text-sm font-medium text-crema-alta backdrop-blur-sm transition-colors hover:bg-crema-alta/20"
           >
             Consultar por WhatsApp
@@ -133,7 +134,7 @@ export default async function Home() {
             </h2>
           </div>
           <a
-            href="https://wa.me/5493413456530"
+            href={linkWhatsapp()}
             className="hidden text-sm font-medium text-marron underline underline-offset-4 sm:block"
           >
             ¿Tenés otra duda?
