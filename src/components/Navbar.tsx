@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { ShoppingBasket, User, Menu } from "lucide-react";
 import { useCarrito } from "@/components/CarritoContext";
 import { createClient } from "@/lib/supabase/client";
@@ -9,6 +10,16 @@ import { createClient } from "@/lib/supabase/client";
 export default function Navbar() {
   const { cantidadTotal } = useCarrito();
   const [sesionActiva, setSesionActiva] = useState(false);
+  const menuMovil = useRef<HTMLDetailsElement>(null);
+  const pathname = usePathname();
+
+  function cerrarMenu() {
+    menuMovil.current?.removeAttribute("open");
+  }
+
+  // Al cambiar de página (por ejemplo tocando el logo o el carrito con el
+  // menú abierto) el header no se vuelve a montar, así que lo cerramos acá.
+  useEffect(cerrarMenu, [pathname]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -46,7 +57,6 @@ export default function Navbar() {
 
     window.scrollTo({ top: y, behavior: "smooth" });
     window.history.pushState(null, "", href);
-    evento.currentTarget.closest("details")?.removeAttribute("open");
   }
 
   return (
@@ -98,13 +108,17 @@ export default function Navbar() {
               )}
             </Link>
 
-            <details className="relative md:hidden">
+            <details ref={menuMovil} className="relative md:hidden">
               <summary className="flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center text-crema-alta [&::-webkit-details-marker]:hidden">
                 <span className="sr-only">Abrir menú</span>
                 <Menu size={24} />
               </summary>
               <nav
                 id="menu-movil"
+                // Cualquier enlace del menú lo cierra, lleve adonde lleve.
+                onClick={(e) => {
+                  if ((e.target as HTMLElement).closest("a")) cerrarMenu();
+                }}
                 className="menu-movil-panel flex flex-col gap-1 border-t border-marron bg-marron px-5 py-3 font-sans text-sm text-crema-alta shadow-lg"
               >
                 {enlaces.map((enlace) => (

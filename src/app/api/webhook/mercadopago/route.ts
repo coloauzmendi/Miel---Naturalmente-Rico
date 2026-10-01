@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { createServiceClient } from "@/lib/supabase/server";
+import { avisarPedidoPorWhatsapp } from "@/lib/avisos";
 
 /**
  * Mercado Pago llama a esta URL cada vez que cambia el estado de un pago.
@@ -45,13 +46,34 @@ export async function POST(request: NextRequest) {
           ? "cancelado"
           : "pendiente_pago";
 
-    await supabase
-      .from("pedidos")
-      .update({
-        estado: nuevoEstado,
-        mp_payment_id: String(payment.id),
-      })
-      .eq("id", pedidoId);
+    const mpPaymentId = String(payment.id);
+
+    if (nuevoEstado === "pagado") {
+      // Mercado Pago avisa varias veces el mismo pago: solo pasamos a
+      // "pagado" (y avisamos por WhatsApp) la primera vez. Así tampoco
+      // pisamos un estado posterior, como "en_preparacion".
+      const { data: actualizados } = await supabase
+        .from("pedidos")
+        .update({ estado: "pagado", mp_payment_id: mpPaymentId })
+        .eq("id", pedidoId)
+        .in("estado", ["pendiente_pago", "cancelado"])
+        .select("id");
+
+      if (actualizados && actualizados.length > 0) {
+        await avisarPedidoPorWhatsapp(pedidoId);
+      }
+    } else if (nuevoEstado === "cancelado") {
+      await supabase
+        .from("pedidos")
+        .update({ estado: "cancelado", mp_payment_id: mpPaymentId })
+        .eq("id", pedidoId);
+    } else {
+      // Pago en proceso: solo guardamos el ID, sin tocar el estado.
+      await supabase
+        .from("pedidos")
+        .update({ mp_payment_id: mpPaymentId })
+        .eq("id", pedidoId);
+    }
 
     return NextResponse.json({ ok: true });
   } catch {

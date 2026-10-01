@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { avisarPedidoPorWhatsapp } from "@/lib/avisos";
 import type { Producto } from "@/types";
 
 // Del navegador solo aceptamos qué productos y cuántos: el nombre y el
@@ -126,6 +127,7 @@ export async function POST(request: NextRequest) {
   // Pago en efectivo: no hay nada que gestionar con Mercado Pago, el
   // pedido queda creado y el cliente coordina la entrega por WhatsApp.
   if (metodo_pago === "efectivo") {
+    await avisarPedidoPorWhatsapp(pedido.id);
     return NextResponse.json({ pedido_id: pedido.id });
   }
 
