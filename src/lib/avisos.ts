@@ -11,7 +11,8 @@ import type { Pedido, PedidoItem } from "@/types";
  * estas 8 variables en el cuerpo, en este orden:
  *   {{1}} código  {{2}} estado  {{3}} total  {{4}} productos
  *   {{5}} cliente {{6}} teléfono {{7}} entrega {{8}} notas
- * y un botón de URL dinámica "https://wa.me/{{1}}" (escribirle al cliente).
+ * y un botón de URL dinámica ".../wa/{{1}}" (escribirle al cliente; ver
+ * src/app/wa/[numero]/route.ts).
  *
  * Variables de entorno:
  *   WHATSAPP_TOKEN            token permanente (usuario del sistema)
@@ -35,7 +36,7 @@ export async function avisarPedidoPorWhatsapp(pedidoId: string) {
     const variables = await armarVariables(pedidoId);
     if (!variables) return;
 
-    const version = process.env.WHATSAPP_API_VERSION ?? "v23.0";
+    const version = process.env.WHATSAPP_API_VERSION ?? "v25.0";
     await Promise.all(
       destinos.map(async (destino) => {
         const respuesta = await fetch(
@@ -65,7 +66,9 @@ export async function avisarPedidoPorWhatsapp(pedidoId: string) {
                   },
                   {
                     // Botón "Escribirle al cliente": la plantilla tiene la
-                    // URL https://wa.me/{{1}} y acá completamos el número.
+                    // URL https://www.mielnaturalmenterico.com.ar/wa/{{1}}
+                    // (Meta no deja poner wa.me directo en un botón) y acá
+                    // completamos el número; /wa redirige al chat.
                     type: "button",
                     sub_type: "url",
                     index: "0",
@@ -169,6 +172,8 @@ async function armarVariables(
     .filter(Boolean)
     .join(" - ");
 
+  const whatsappCliente = telefonoParaWhatsapp(pedido.telefono_contacto);
+
   const cuerpo = [
     pedido.id.slice(0, 8).toUpperCase(),
     pedido.metodo_pago === "mercadopago"
@@ -177,13 +182,13 @@ async function armarVariables(
     formatearPrecio(pedido.total),
     productos,
     cliente,
-    pedido.telefono_contacto,
+    // Con formato internacional WhatsApp lo reconoce y se puede tocar.
+    whatsappCliente.startsWith("549")
+      ? `+${whatsappCliente}`
+      : pedido.telefono_contacto,
     pedido.direccion_entrega,
     pedido.notas ?? "",
   ].map(limpiar);
 
-  return {
-    cuerpo,
-    whatsappCliente: telefonoParaWhatsapp(pedido.telefono_contacto),
-  };
+  return { cuerpo, whatsappCliente };
 }
