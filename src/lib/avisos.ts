@@ -11,6 +11,7 @@ import type { Pedido, PedidoItem } from "@/types";
  * estas 8 variables en el cuerpo, en este orden:
  *   {{1}} código  {{2}} estado  {{3}} total  {{4}} productos
  *   {{5}} cliente {{6}} teléfono {{7}} entrega {{8}} notas
+ * y un botón de URL dinámica "https://wa.me/{{1}}" (escribirle al cliente).
  *
  * Variables de entorno:
  *   WHATSAPP_TOKEN            token permanente (usuario del sistema)
@@ -57,7 +58,18 @@ export async function avisarPedidoPorWhatsapp(pedidoId: string) {
                 components: [
                   {
                     type: "body",
-                    parameters: variables.map((text) => ({ type: "text", text })),
+                    parameters: variables.cuerpo.map((text) => ({
+                      type: "text",
+                      text,
+                    })),
+                  },
+                  {
+                    // Botón "Escribirle al cliente": la plantilla tiene la
+                    // URL https://wa.me/{{1}} y acá completamos el número.
+                    type: "button",
+                    sub_type: "url",
+                    index: "0",
+                    parameters: [{ type: "text", text: variables.whatsappCliente }],
                   },
                 ],
               },
@@ -90,7 +102,38 @@ function limpiar(texto: string | null | undefined) {
   return limpio || "-";
 }
 
-async function armarVariables(pedidoId: string): Promise<string[] | null> {
+/**
+ * Pasa un teléfono argentino escrito como sea ("341 15 335-4101",
+ * "0341 3354101", "+54 9 341...") al formato que usa WhatsApp:
+ * 549 + característica + número, sin el 0 ni el 15.
+ */
+export function telefonoParaWhatsapp(telefono: string) {
+  let numero = telefono.replace(/\D/g, "").replace(/^00/, "");
+  if (numero.startsWith("54")) numero = numero.slice(2).replace(/^9/, "");
+  numero = numero.replace(/^0/, "");
+
+  // Con el 15 después de la característica (de 2 a 4 dígitos) sobran 2.
+  if (numero.length === 12) {
+    for (const largoCaracteristica of [2, 3, 4]) {
+      if (numero.slice(largoCaracteristica, largoCaracteristica + 2) === "15") {
+        numero =
+          numero.slice(0, largoCaracteristica) +
+          numero.slice(largoCaracteristica + 2);
+        break;
+      }
+    }
+  }
+
+  // Número local sin característica: asumimos la de la zona (Rosario, 341).
+  if (numero.length === 9 && numero.startsWith("15")) numero = numero.slice(2);
+  if (numero.length === 7) numero = `341${numero}`;
+
+  return numero.length === 10 ? `549${numero}` : numero || "-";
+}
+
+async function armarVariables(
+  pedidoId: string
+): Promise<{ cuerpo: string[]; whatsappCliente: string } | null> {
   const supabase = createServiceClient();
 
   const { data: pedido } = await supabase
@@ -126,7 +169,7 @@ async function armarVariables(pedidoId: string): Promise<string[] | null> {
     .filter(Boolean)
     .join(" - ");
 
-  return [
+  const cuerpo = [
     pedido.id.slice(0, 8).toUpperCase(),
     pedido.metodo_pago === "mercadopago"
       ? "PAGADO con Mercado Pago"
@@ -138,4 +181,9 @@ async function armarVariables(pedidoId: string): Promise<string[] | null> {
     pedido.direccion_entrega,
     pedido.notas ?? "",
   ].map(limpiar);
+
+  return {
+    cuerpo,
+    whatsappCliente: telefonoParaWhatsapp(pedido.telefono_contacto),
+  };
 }
