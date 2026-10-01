@@ -61,6 +61,8 @@ create table if not exists public.productos (
   -- una con su propio precio: [{"nombre": "Acelga", "precio": 8500}, ...].
   -- null o lista vacía significa que el producto no tiene variantes.
   sabores jsonb,
+  -- Encuadre de cada foto, por URL: {"<url>": {"x": 40, "y": 65, "zoom": 1.3}}.
+  encuadres jsonb,
   created_at timestamptz not null default now()
 );
 

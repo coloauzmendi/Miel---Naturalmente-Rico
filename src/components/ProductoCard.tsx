@@ -8,6 +8,7 @@ import { formatearPrecio } from "@/lib/formato";
 import { useCarrito } from "@/components/CarritoContext";
 import { etiquetaCategoria } from "@/lib/categorias";
 import { Plus, Sun, Moon } from "lucide-react";
+import { estiloEncuadre } from "@/lib/encuadre";
 
 const DURACION_ROTACION = 3000;
 
@@ -40,14 +41,21 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
       >
         {imagenes.length > 0 ? (
           imagenes.map((url, i) => (
-            <img
+            // El zoom del hover va en este contenedor y el del encuadre en
+            // la foto, así no se pisan entre sí.
+            <div
               key={url}
-              src={url}
-              alt={producto.nombre}
-              className={`absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-in-out group-hover:scale-105 ${
+              className={`absolute inset-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:scale-105 ${
                 i === indiceFoto ? "opacity-100" : "opacity-0"
               }`}
-            />
+            >
+              <img
+                src={url}
+                alt={producto.nombre}
+                className="h-full w-full object-cover"
+                style={estiloEncuadre(producto.encuadres?.[url])}
+              />
+            </div>
           ))
         ) : (
           <div className="flex h-full w-full items-center justify-center text-oliva/40">

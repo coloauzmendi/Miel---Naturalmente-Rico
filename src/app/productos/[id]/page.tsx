@@ -24,6 +24,7 @@ export default async function ProductoDetalle({
         <GaleriaProducto
           imagenes={producto.imagenes ?? (producto.imagen_url ? [producto.imagen_url] : [])}
           nombre={producto.nombre}
+          encuadres={producto.encuadres}
         />
 
         <div>

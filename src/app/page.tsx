@@ -75,9 +75,9 @@ export default function Home() {
           <div className="flex items-start gap-3">
             <Snowflake className="mt-1 shrink-0 text-oliva" size={22} />
             <div>
-              <p className="font-medium text-tinta">Cocido o congelado</p>
+              <p className="font-medium text-tinta">Cocido y congelado</p>
               <p className="text-sm text-tinta/70">
-                Vos elegís cómo lo querés recibir.
+                Del freezer a tu mesa en 5 minutos.
               </p>
             </div>
           </div>

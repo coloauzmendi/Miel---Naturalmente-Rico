@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Producto, Categoria, SaborProducto } from "@/types";
+import { Producto, Categoria, SaborProducto, Encuadre } from "@/types";
 import { formatearPrecio } from "@/lib/formato";
 import { CATEGORIAS, etiquetaCategoria } from "@/lib/categorias";
-import { Pencil, Trash2, Plus, X } from "lucide-react";
+import { Pencil, Trash2, Plus, X, Crop } from "lucide-react";
+import EditorEncuadre from "@/components/EditorEncuadre";
+import { estiloEncuadre } from "@/lib/encuadre";
 
 const VACIO = {
   nombre: "",
@@ -16,6 +18,7 @@ const VACIO = {
   activo: true,
   destacado: false,
   sabores: [] as SaborProducto[],
+  encuadres: {} as Record<string, Encuadre>,
 };
 
 export default function AdminProductosClient({
@@ -30,6 +33,8 @@ export default function AdminProductosClient({
   const [guardando, setGuardando] = useState(false);
   const [subiendoImagen, setSubiendoImagen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // URL de la foto que se está encuadrando (null = editor cerrado).
+  const [ajustando, setAjustando] = useState<string | null>(null);
 
   async function subirImagenes(archivos: FileList) {
     setSubiendoImagen(true);
@@ -107,6 +112,7 @@ export default function AdminProductosClient({
       activo: p.activo,
       destacado: p.destacado,
       sabores: p.sabores ?? [],
+      encuadres: p.encuadres ?? {},
     });
     setEditando(p.id);
     setMostrarForm(true);
@@ -158,6 +164,20 @@ export default function AdminProductosClient({
 
   return (
     <div className="mt-6">
+      {ajustando && (
+        <EditorEncuadre
+          url={ajustando}
+          inicial={form.encuadres[ajustando]}
+          onCerrar={() => setAjustando(null)}
+          onListo={(encuadre) => {
+            setForm((f) => ({
+              ...f,
+              encuadres: { ...f.encuadres, [ajustando]: encuadre },
+            }));
+            setAjustando(null);
+          }}
+        />
+      )}
       <button
         onClick={abrirNuevo}
         className="mb-6 flex items-center gap-1.5 rounded-full bg-oliva px-4 py-2 text-sm text-crema-alta hover:bg-oliva-claro"
@@ -222,7 +242,17 @@ export default function AdminProductosClient({
                         src={url}
                         alt=""
                         className="h-16 w-16 rounded-lg border border-linea object-cover"
+                        style={estiloEncuadre(form.encuadres[url])}
                       />
+                      <button
+                        type="button"
+                        onClick={() => setAjustando(url)}
+                        aria-label="Ajustar encuadre de esta foto"
+                        title="Ajustar"
+                        className="absolute -left-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-oliva text-crema-alta"
+                      >
+                        <Crop size={11} />
+                      </button>
                       {indice === 0 && (
                         <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 rounded-full bg-marron px-1.5 py-0.5 text-[10px] text-crema-alta">
                           Portada
@@ -261,7 +291,8 @@ export default function AdminProductosClient({
             <span className="text-xs text-tinta/50">
               La primera foto de la lista es la que se usa como portada. Para
               cambiar el orden, quitá las que no correspondan y volvé a
-              subirlas en el orden que quieras.
+              subirlas en el orden que quieras. Con el botón verde de cada
+              foto podés reubicarla o acercarla.
             </span>
           </div>
           <div className="flex flex-col gap-2 sm:col-span-2">

@@ -22,7 +22,18 @@ export interface Producto {
   // relleno), cada una con su propio precio. null o [] significa que el
   // producto no tiene variantes.
   sabores: SaborProducto[] | null;
+  // Cómo encuadrar cada foto, por URL. Las fotos sin encuadre se ven
+  // centradas y sin zoom.
+  encuadres?: Record<string, Encuadre> | null;
   created_at?: string;
+}
+
+export interface Encuadre {
+  // Punto de la foto que queda en el centro del recuadro, en % (0 a 100).
+  x: number;
+  y: number;
+  // 1 = sin zoom.
+  zoom: number;
 }
 
 export type EstadoPedido =

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCarrito } from "@/components/CarritoContext";
 import { formatearPrecio } from "@/lib/formato";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { estiloEncuadre } from "@/lib/encuadre";
 
 export default function CarritoPage() {
   const { items, actualizarCantidad, quitar, total } = useCarrito();
@@ -44,6 +45,9 @@ export default function CarritoPage() {
                   src={producto.imagen_url}
                   alt={producto.nombre}
                   className="h-full w-full object-cover"
+                  style={estiloEncuadre(
+                    producto.encuadres?.[producto.imagen_url],
+                  )}
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-oliva/30">

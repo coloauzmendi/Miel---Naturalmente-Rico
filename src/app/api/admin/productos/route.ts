@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { limpiarEncuadres } from "@/lib/encuadre";
 
 async function requiereAdmin() {
   const supabase = await createClient();
@@ -38,6 +39,7 @@ export async function POST(request: NextRequest) {
       activo: body.activo ?? true,
       destacado: body.destacado ?? false,
       sabores: body.sabores?.length ? body.sabores : null,
+      encuadres: limpiarEncuadres(body.encuadres, imagenes),
     })
     .select()
     .single();

@@ -2,15 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { Encuadre } from "@/types";
+import { estiloEncuadre } from "@/lib/encuadre";
 
 const DURACION = 4500;
 
 export default function GaleriaProducto({
   imagenes,
   nombre,
+  encuadres,
 }: {
   imagenes: string[];
   nombre: string;
+  encuadres?: Record<string, Encuadre> | null;
 }) {
   const [indice, setIndice] = useState(0);
 
@@ -42,6 +46,7 @@ export default function GaleriaProducto({
           key={url}
           src={url}
           alt={`${nombre} ${i + 1}`}
+          style={estiloEncuadre(encuadres?.[url])}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-in-out ${
             i === indice ? "opacity-100" : "opacity-0"
           }`}

@@ -5,14 +5,14 @@ import { ChevronDown } from "lucide-react";
 
 const preguntas = [
   {
-    pregunta: "¿Cómo se conserva y descongela cada producto?",
+    pregunta: "¿Cómo se conserva cada producto?",
     respuesta:
       "Los productos congelados viajan conservando la cadena de frío. Guardalos en el freezer y descongelalos en la heladera con anticipación. Los productos cocidos se entregan listos para consumir y conviene conservarlos refrigerados.",
   },
   {
     pregunta: "¿Cuánto tarda la entrega y qué zonas cubren?",
     respuesta:
-      "Hacemos entregas en Carcarañá y alrededores. Coordinamos el día y la franja horaria por WhatsApp después de confirmar el pedido. También podés elegir retiro si te resulta más cómodo.",
+      "Hacemos entregas en Carcarañá y alrededores. Coordinamos el día y el horario por WhatsApp después de confirmar el pedido. También podés retirarlo si te resulta más cómodo.",
   },
   {
     pregunta: "¿Qué pasa si no estoy cuando llega el pedido?",
@@ -22,7 +22,7 @@ const preguntas = [
   {
     pregunta: "¿Puedo hacer un pedido personalizado?",
     respuesta:
-      "Sí. Para cantidades grandes, viandas o necesidades especiales, contactanos por WhatsApp y lo vemos juntas antes de que confirmes la compra.",
+      "Sí. Para cantidades grandes, viandas o necesidades especiales, contactanos por WhatsApp con anticipación y lo vemos juntas antes de que confirmes la compra.",
   },
 ];
 
