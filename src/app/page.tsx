@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ProductosInicio from "@/components/ProductosInicio";
-import CarruselNosotras from "@/components/CarruselNosotras";
+import PilaFotosNosotras from "@/components/PilaFotosNosotras";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import HeroFotos from "@/components/HeroFotos";
 import ComoFunciona from "@/components/ComoFunciona";
@@ -101,7 +101,7 @@ export default function Home() {
 
       <section id="nosotras" className="scroll-mt-[var(--nav-h)] bg-oliva/5">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-16 md:grid-cols-2 md:items-center">
-          <CarruselNosotras />
+          <PilaFotosNosotras />
           <div>
             <h2 className="font-display text-3xl text-tinta">Sobre nosotras</h2>
             <p className="mt-4 text-tinta/70">

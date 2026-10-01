@@ -114,26 +114,6 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .carrusel-pista {
-    animation: deslizar-fotos 25s linear infinite;
-  }
-
-  .carrusel-marco:hover .carrusel-pista,
-  .carrusel-marco:focus-within .carrusel-pista {
-    animation-play-state: paused;
-  }
-}
-
-@keyframes deslizar-fotos {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-30%);
-  }
-}
-
 @keyframes marquee-infinito {
   0% {
     transform: translateX(0%);
