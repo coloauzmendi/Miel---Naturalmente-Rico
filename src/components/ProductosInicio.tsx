@@ -4,8 +4,8 @@ import { ArrowRight } from "lucide-react";
 import { Categoria } from "@/types";
 import { CATEGORIAS } from "@/lib/categorias";
 import TarjetaCategoria from "@/components/TarjetaCategoria";
-import fotoAlmuerzos from "@/img/dos-tartas.jpeg";
-import fotoDesayunos from "@/img/pancakes-granola.jpeg";
+import fotoAlmuerzos from "@/img/almuerzos-cenas.jpeg";
+import fotoDesayunos from "@/img/desayunos-meriendas.jpeg";
 
 const FOTOS: Record<Categoria, StaticImageData> = {
   "almuerzos-cenas": fotoAlmuerzos,
