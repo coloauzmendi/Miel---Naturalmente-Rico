@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { obtenerProductos } from "@/lib/productos";
 import ProductosInicio from "@/components/ProductosInicio";
 import CarruselNosotras from "@/components/CarruselNosotras";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
@@ -9,9 +8,7 @@ import ComunidadMiel from "@/components/ComunidadMiel";
 import { Leaf, Snowflake, ShieldCheck } from "lucide-react";
 import { linkWhatsapp } from "@/lib/contacto";
 
-export default async function Home() {
-  const productos = await obtenerProductos();
-
+export default function Home() {
   return (
     <>
       <HeroFotos>
@@ -98,7 +95,7 @@ export default async function Home() {
 
       <ComoFunciona />
 
-      <ProductosInicio productos={productos} />
+      <ProductosInicio />
 
       <ComunidadMiel />
 
