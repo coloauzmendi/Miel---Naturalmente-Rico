@@ -37,7 +37,7 @@ Environment Variables (para el sitio publicado). Nunca se suben al repo.
 | `NEXT_PUBLIC_SITE_URL` | `https://www.mielnaturalmenterico.com.ar` |
 | `WHATSAPP_TOKEN` | Token permanente del usuario del sistema de Meta (⚠️ secreta) |
 | `WHATSAPP_PHONE_NUMBER_ID` | ID del número que envía los avisos |
-| `WHATSAPP_AVISO_DESTINOS` | Números que reciben los avisos, separados por coma (`549…`) |
+| `WHATSAPP_AVISO_DESTINOS` | Números que reciben los avisos, separados por coma. Para Argentina, Meta los pide con el 15 y sin el 9: `54` + característica + `15` + número (ej: `54341156149016`) |
 | `WHATSAPP_PLANTILLA` | Opcional: `nuevo_pedido` (por defecto, con botón) o `aviso_pedido` |
 
 Si faltan las de WhatsApp, simplemente no se mandan avisos. El número de
