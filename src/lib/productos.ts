@@ -1,16 +1,8 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import { productosDemo } from "@/lib/productos-demo";
 import { Producto } from "@/types";
 
-const supabaseConfigurado = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
-
 export async function obtenerProductos(): Promise<Producto[]> {
-  if (!supabaseConfigurado) return productosDemo;
-
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("productos")
@@ -18,7 +10,12 @@ export async function obtenerProductos(): Promise<Producto[]> {
     .eq("activo", true)
     .order("created_at", { ascending: false });
 
-  if (error || !data) return productosDemo;
+  if (error || !data) {
+    // Queda en los logs de Vercel. Mostramos el catálogo vacío antes que
+    // productos que no existen.
+    console.error("No se pudieron cargar los productos:", error);
+    return [];
+  }
   return data as Producto[];
 }
 
@@ -27,10 +24,6 @@ export async function obtenerProductos(): Promise<Producto[]> {
 export const obtenerProductoPorId = cache(async function obtenerProductoPorId(
   id: string,
 ): Promise<Producto | null> {
-  if (!supabaseConfigurado) {
-    return productosDemo.find((p) => p.id === id) ?? null;
-  }
-
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("productos")

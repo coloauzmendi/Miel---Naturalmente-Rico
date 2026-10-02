@@ -9,6 +9,7 @@ import {
   ReactNode,
 } from "react";
 import { ItemCarrito, Producto } from "@/types";
+import { createClient } from "@/lib/supabase/client";
 
 interface CarritoContextValor {
   items: ItemCarrito[];
@@ -20,6 +21,9 @@ interface CarritoContextValor {
     sabor?: string | null,
   ) => void;
   vaciar: () => void;
+  // Mensaje si al abrir la página hubo que corregir el carrito (precio
+  // nuevo, producto agotado, etc.). null si no cambió nada.
+  avisoCarrito: string | null;
   total: number;
   cantidadTotal: number;
 }
@@ -33,9 +37,62 @@ function mismoItem(item: ItemCarrito, productoId: string, sabor: string | null) 
   return item.producto.id === productoId && (item.sabor ?? null) === (sabor ?? null);
 }
 
+// El carrito guarda una copia de cada producto del momento en que se
+// agregó. Al abrir la página la comparamos con los datos reales de la
+// tienda: así el precio que se ve es el que se cobra, y los productos
+// ocultos o agotados (stock 0) salen solos. Devuelve el carrito corregido
+// y qué cambió, o null si no se pudo consultar.
+async function refrescarCarrito(
+  guardados: ItemCarrito[],
+): Promise<{ items: ItemCarrito[]; cambios: string[] } | null> {
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    return null;
+  }
+
+  const { data, error } = await createClient()
+    .from("productos")
+    .select("*")
+    .in("id", [...new Set(guardados.map((i) => i.producto.id))])
+    .eq("activo", true);
+  if (error || !data) return null;
+
+  const actuales = data as Producto[];
+  const cambios: string[] = [];
+  const items = guardados.flatMap((item) => {
+    const producto = actuales.find((p) => p.id === item.producto.id);
+    const sabores = producto?.sabores ?? [];
+    const sabor = item.sabor
+      ? sabores.find((s) => s.nombre === item.sabor)
+      : undefined;
+
+    if (!producto || producto.stock <= 0 || (sabores.length > 0 && !sabor)) {
+      cambios.push(`${item.producto.nombre} ya no está disponible`);
+      return [];
+    }
+
+    const precio = sabor ? sabor.precio : producto.precio;
+    if (precio !== item.producto.precio) {
+      cambios.push(`${producto.nombre} cambió de precio`);
+    }
+    return [
+      {
+        ...item,
+        producto: { ...producto, precio },
+        cantidad: Math.min(item.cantidad, producto.stock),
+      },
+    ];
+  });
+
+  return { items, cambios };
+}
+
 export function CarritoProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ItemCarrito[]>([]);
   const [cargado, setCargado] = useState(false);
+  const [avisoCarrito, setAvisoCarrito] = useState<string | null>(null);
 
   // Cargar carrito guardado al montar
   useEffect(() => {
@@ -44,8 +101,30 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
       if (guardado) {
         const itemsGuardados: ItemCarrito[] = JSON.parse(guardado);
         // Compatibilidad con carritos guardados antes de que existiera "sabor".
+        const normalizados = itemsGuardados.map((i) => ({
+          ...i,
+          sabor: i.sabor ?? null,
+        }));
         // eslint-disable-next-line react-hooks/set-state-in-effect -- hidratación intencional de estado persistido, se ejecuta una sola vez al montar
-        setItems(itemsGuardados.map((i) => ({ ...i, sabor: i.sabor ?? null })));
+        setItems(normalizados);
+
+        if (normalizados.length > 0) {
+          refrescarCarrito(normalizados).then((resultado) => {
+            if (!resultado || resultado.cambios.length === 0) return;
+            // Solo reemplazamos las líneas que venían guardadas: si mientras
+            // tanto la persona agregó algo nuevo, lo conservamos.
+            setItems((actuales) => [
+              ...resultado.items,
+              ...actuales.filter(
+                (a) =>
+                  !normalizados.some((n) => mismoItem(n, a.producto.id, a.sabor)),
+              ),
+            ]);
+            setAvisoCarrito(
+              `Actualizamos tu carrito: ${resultado.cambios.join(", ")}.`,
+            );
+          });
+        }
       }
     } catch {
       // si el storage está corrupto, arrancamos con carrito vacío
@@ -120,7 +199,16 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
 
   return (
     <CarritoContext.Provider
-      value={{ items, agregar, quitar, actualizarCantidad, vaciar, total, cantidadTotal }}
+      value={{
+        items,
+        agregar,
+        quitar,
+        actualizarCantidad,
+        vaciar,
+        avisoCarrito,
+        total,
+        cantidadTotal,
+      }}
     >
       {children}
     </CarritoContext.Provider>

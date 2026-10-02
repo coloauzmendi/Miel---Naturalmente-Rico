@@ -63,7 +63,7 @@ export default function Footer() {
             <Mail size={16} className="shrink-0" /> {EMAIL_TIENDA}
           </a>
           <p className="flex items-center gap-2 text-crema-alta/80">
-            <MapPin size={16} /> Retiro y envíos en Carcaraña y alrededores
+            <MapPin size={16} /> Retiro y envíos en Carcarañá y alrededores
           </p>
         </div>
 

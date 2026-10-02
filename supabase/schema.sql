@@ -26,6 +26,28 @@ create policy "Los usuarios actualizan su propio perfil"
   on public.perfiles for update
   using (auth.uid() = id);
 
+-- Solo nombre y teléfono: el rol no se puede tocar desde la tienda (ver
+-- migración 2026-10-02-proteger-rol.sql).
+revoke update on public.perfiles from anon, authenticated;
+grant update (nombre, telefono) on public.perfiles to authenticated;
+
+create or replace function public.proteger_rol()
+returns trigger as $$
+begin
+  if new.rol is distinct from old.rol
+     and coalesce(auth.role(), '') <> 'service_role'
+     and current_user not in ('postgres', 'supabase_admin') then
+    raise exception 'No se puede cambiar el rol desde la tienda';
+  end if;
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists proteger_rol on public.perfiles;
+create trigger proteger_rol
+  before update on public.perfiles
+  for each row execute procedure public.proteger_rol();
+
 -- Crea el perfil automáticamente cuando alguien se registra
 create or replace function public.manejar_nuevo_usuario()
 returns trigger as $$

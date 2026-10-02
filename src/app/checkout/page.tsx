@@ -11,7 +11,7 @@ import { linkWhatsapp } from "@/lib/contacto";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, vaciar } = useCarrito();
+  const { items, total } = useCarrito();
   const [usuario, setUsuario] = useState<User | null>(null);
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [enviando, setEnviando] = useState<"mercadopago" | "efectivo" | null>(
@@ -31,10 +31,15 @@ export default function CheckoutPage() {
     });
   }, []);
 
-  if (!cargandoSesion && items.length === 0) {
-    router.replace("/carrito");
-    return null;
-  }
+  // Carrito vacío: no hay nada que comprar, lo mandamos al carrito. Se
+  // saltea mientras se confirma un pedido, para no pisar la navegación a
+  // la pantalla de éxito.
+  const sinItems = !cargandoSesion && items.length === 0 && enviando === null;
+  useEffect(() => {
+    if (sinItems) router.replace("/carrito");
+  }, [sinItems, router]);
+
+  if (sinItems) return null;
 
   if (!cargandoSesion && !usuario) {
     return (
@@ -135,7 +140,7 @@ export default function CheckoutPage() {
           ventanaWsp.location.href = urlWsp;
         }
 
-        vaciar();
+        // El carrito lo vacía la pantalla de éxito (VaciarCarrito).
         router.push(
           `/checkout/exito?pedido=${datos.pedido_id}&efectivo=1&wsp=${encodeURIComponent(urlWsp)}`,
         );

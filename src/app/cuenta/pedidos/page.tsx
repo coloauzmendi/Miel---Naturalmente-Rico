@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { formatearFecha, formatearPrecio } from "@/lib/formato";
+import { codigoPedido, formatearFecha, formatearPrecio } from "@/lib/formato";
 import { EstadoPedido } from "@/types";
 import CerrarSesionBoton from "@/components/CerrarSesionBoton";
 
@@ -95,7 +95,7 @@ export default async function MisPedidosPage() {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="text-sm text-tinta/60">
-                    Pedido del {formatearFecha(pedido.created_at)}
+                    Pedido {codigoPedido(pedido.id)} del {formatearFecha(pedido.created_at)}
                   </p>
                   <p className="font-display text-lg text-tinta">
                     {formatearPrecio(pedido.total)}

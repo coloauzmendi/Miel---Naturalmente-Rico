@@ -7,7 +7,7 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { estiloEncuadre } from "@/lib/encuadre";
 
 export default function CarritoPage() {
-  const { items, actualizarCantidad, quitar, total } = useCarrito();
+  const { items, actualizarCantidad, quitar, total, avisoCarrito } = useCarrito();
 
   if (items.length === 0) {
     return (
@@ -31,6 +31,11 @@ export default function CarritoPage() {
   return (
     <div className="mx-auto max-w-4xl px-5 py-14">
       <h1 className="font-display text-3xl text-tinta">Tu carrito</h1>
+      {avisoCarrito && (
+        <p className="mt-4 rounded-lg bg-crema-alta p-3 text-sm text-dorado-oscuro">
+          {avisoCarrito}
+        </p>
+      )}
 
       <div className="mt-8 divide-y divide-linea border-y border-linea">
         {items.map(({ producto, cantidad, sabor }) => (

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { EstadoPedido, Pedido, PedidoItem } from "@/types";
-import { formatearFechaHora, formatearPrecio } from "@/lib/formato";
+import { codigoPedido, formatearFechaHora, formatearPrecio } from "@/lib/formato";
 
 const ESTADOS: EstadoPedido[] = [
   "pendiente_pago",
@@ -32,12 +32,23 @@ export default function AdminPedidosClient({
   const [pedidos, setPedidos] = useState(pedidosIniciales);
 
   async function cambiarEstado(id: string, estado: EstadoPedido) {
+    const anterior = pedidos.find((p) => p.id === id)?.estado;
     setPedidos((prev) => prev.map((p) => (p.id === id ? { ...p, estado } : p)));
-    await fetch(`/api/admin/pedidos/${id}`, {
+
+    const respuesta = await fetch(`/api/admin/pedidos/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ estado }),
-    });
+    }).catch(() => null);
+
+    // Si no se guardó (sin conexión, sesión vencida...), volvemos atrás
+    // para que la pantalla no muestre un estado que no quedó registrado.
+    if (!respuesta?.ok && anterior) {
+      setPedidos((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, estado: anterior } : p)),
+      );
+      alert("No se pudo guardar el cambio de estado. Recargá la página y probá de nuevo.");
+    }
   }
 
   if (pedidos.length === 0) {
@@ -51,7 +62,8 @@ export default function AdminPedidosClient({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <p className="text-sm text-tinta/60">
-                {formatearFechaHora(pedido.created_at)} hs
+                <span className="font-medium text-tinta">{codigoPedido(pedido.id)}</span>{" "}
+                · {formatearFechaHora(pedido.created_at)} hs
               </p>
               <p className="font-display text-lg text-tinta">{formatearPrecio(pedido.total)}</p>
               <p className="text-sm text-tinta/70">

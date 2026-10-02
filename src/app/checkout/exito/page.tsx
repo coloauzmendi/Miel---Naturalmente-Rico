@@ -53,12 +53,11 @@ export default async function CheckoutExito({
   searchParams: Promise<{
     pedido?: string;
     pendiente?: string;
-    demo?: string;
     efectivo?: string;
     wsp?: string;
   }>;
 }) {
-  const { pedido, pendiente, demo, efectivo, wsp } = await searchParams;
+  const { pedido, pendiente, efectivo, wsp } = await searchParams;
 
   const wspMercadoPago =
     pedido && !efectivo
@@ -82,12 +81,6 @@ export default async function CheckoutExito({
               ? "Te avisamos apenas se confirme el pago."
               : "Ya recibimos tu pedido y te vamos a avisar cuando esté en preparación."}
       </p>
-      {demo && (
-        <p className="mt-3 rounded-lg bg-crema-alta p-3 text-sm text-dorado-oscuro">
-          Estás viendo el flujo de demostración: todavía no configuraste
-          MERCADOPAGO_ACCESS_TOKEN en el archivo .env.
-        </p>
-      )}
       {linkWsp && (
         <a
           href={linkWsp}

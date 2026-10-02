@@ -23,14 +23,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Necesitás iniciar sesión." }, { status: 401 });
   }
 
-  const body = await request.json();
+  const body = await request.json().catch(() => null);
+  if (!body) {
+    return NextResponse.json({ error: "Pedido inválido." }, { status: 400 });
+  }
   const items: ItemRecibido[] = body.items;
-  const { direccion_entrega, telefono_contacto, notas } = body;
+  // Recortamos espacios y largo para que no se guarde basura en la base.
+  const texto = (valor: unknown, maximo: number) =>
+    typeof valor === "string" ? valor.trim().slice(0, maximo) : "";
+  const direccion_entrega = texto(body.direccion_entrega, 300);
+  const telefono_contacto = texto(body.telefono_contacto, 40);
+  const notas = texto(body.notas, 500);
   const metodo_pago: "mercadopago" | "efectivo" =
     body.metodo_pago === "efectivo" ? "efectivo" : "mercadopago";
 
   if (!Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ error: "El carrito está vacío." }, { status: 400 });
+  }
+  if (items.length > 50) {
+    return NextResponse.json({ error: "El pedido tiene demasiados productos." }, { status: 400 });
   }
   if (!direccion_entrega || !telefono_contacto) {
     return NextResponse.json(
@@ -57,6 +68,13 @@ export async function POST(request: NextRequest) {
     if (!producto || !Number.isInteger(i.cantidad) || i.cantidad < 1) {
       return NextResponse.json(
         { error: "Algún producto del carrito ya no está disponible. Revisá tu carrito." },
+        { status: 400 }
+      );
+    }
+    // Stock en 0 = agotado (se maneja a mano desde el panel).
+    if (producto.stock <= 0) {
+      return NextResponse.json(
+        { error: `${producto.nombre} está agotado por ahora. Sacalo del carrito para seguir.` },
         { status: 400 }
       );
     }
@@ -118,6 +136,8 @@ export async function POST(request: NextRequest) {
     .insert(itemsPedido.map((i) => ({ ...i, pedido_id: pedido.id })));
 
   if (errorItems) {
+    // Sin productos el pedido no sirve: lo borramos para que no quede vacío.
+    await admin.from("pedidos").delete().eq("id", pedido.id);
     return NextResponse.json(
       { error: "No pudimos guardar los productos del pedido." },
       { status: 500 }
@@ -131,12 +151,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ pedido_id: pedido.id });
   }
 
-  // Si todavía no configuraste Mercado Pago, devolvemos un link de éxito
-  // de prueba para que puedas ver el flujo completo igual.
+  // Sin la clave de Mercado Pago no se puede cobrar: avisamos el error en
+  // vez de dar el pedido por hecho.
   if (!process.env.MERCADOPAGO_ACCESS_TOKEN) {
-    return NextResponse.json({
-      init_point: `/checkout/exito?pedido=${pedido.id}&demo=1`,
-    });
+    console.error("Falta MERCADOPAGO_ACCESS_TOKEN: no se puede cobrar con Mercado Pago.");
+    return NextResponse.json(
+      { error: "El pago con Mercado Pago no está disponible en este momento. Probá en efectivo o escribinos por WhatsApp." },
+      { status: 503 }
+    );
   }
 
   // 3. Crear la preferencia de pago en Mercado Pago

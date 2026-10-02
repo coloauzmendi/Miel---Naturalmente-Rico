@@ -7,13 +7,13 @@ const pasos = [
     emoji: "🛒",
     titulo: "Explorá nuestros productos",
     texto:
-      'Agregá al carrito todos los productos que quieras. Cuando termines, ingresá al carrito y hacé clic en "Continuar con la compra".',
+      'Agregá al carrito todos los productos que quieras. Cuando termines, ingresá al carrito y hacé clic en "Continuar con la compra". (No olvides crearte una cuenta, te toma solo 1 minuto)',
   },
   {
     emoji: "💳",
     titulo: "Elegí método de pago",
     texto:
-      "Completa los datos, y elegí tu método de pago preferido. Podés pagar a través de Mercado Pago o abonar en efectivo cuando tengas tu pedido en mano.",
+      "Completá los datos y elegí tu método de pago preferido. Podés pagar a través de Mercado Pago o abonar en efectivo cuando tengas tu pedido en mano.",
   },
   {
     emoji: "📲",

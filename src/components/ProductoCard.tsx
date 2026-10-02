@@ -29,8 +29,8 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
     const temporizador = window.setInterval(() => {
       setIndiceFoto((i) => (i + 1) % imagenes.length);
     }, DURACION_ROTACION);
+    // Solo depende de cuántas fotos hay, no de su contenido.
     return () => window.clearInterval(temporizador);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo depende de cuántas fotos hay, no de su contenido
   }, [imagenes.length]);
 
   return (

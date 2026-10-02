@@ -1,3 +1,8 @@
+// Código corto del pedido, el mismo que va en los mensajes de WhatsApp.
+export function codigoPedido(id: string): string {
+  return `#${id.slice(0, 8).toUpperCase()}`;
+}
+
 export function formatearPrecio(precio: number): string {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",

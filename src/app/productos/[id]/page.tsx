@@ -77,7 +77,7 @@ export default async function ProductoDetalle({
                 Conservación
               </p>
               <p className="mt-1 text-xs leading-relaxed text-tinta/65">
-                Guardalo según corresponda y seguí las indicaciones de entrega.
+                Los congelados van al freezer y se descongelan en la heladera con anticipación. Los cocidos llegan listos para consumir y conviene conservarlos refrigerados.
               </p>
             </div>
             <div className="rounded-xl bg-crema-alta p-4">

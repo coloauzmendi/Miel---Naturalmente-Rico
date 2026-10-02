@@ -1,141 +1,100 @@
 # Miel, naturalmente rico — Tienda online
 
-Tienda online para el emprendimiento de alimentos cocidos y congelados de
-Sol y Abril. Hecha con **Next.js**, **Tailwind CSS**, **Supabase**
-(base de datos + cuentas de usuario) y **Mercado Pago** (pagos).
+Tienda online de comida casera cocida y congelada de Sol y Abril:
+**https://www.mielnaturalmenterico.com.ar**
+
+Hecha con **Next.js 16**, **Tailwind CSS 4**, **Supabase** (base de datos,
+cuentas y fotos), **Mercado Pago** (pagos) y la **API de WhatsApp** (avisos
+de pedidos nuevos). Publicada en **Vercel**.
 
 ## Qué incluye
 
-- Catálogo de productos con filtro por categoría (cocidos / congelados)
-- Carrito de compras
-- Cuentas de usuario (registro / login) con historial de pedidos
-- Checkout integrado con Mercado Pago
-- Webhook que confirma el pago automáticamente y actualiza el pedido
-- Panel de administración (`/admin`) para cargar productos y gestionar pedidos
-- Seguridad a nivel de base de datos (Row Level Security): cada cliente
-  solo puede ver sus propios pedidos; solo los admins pueden editar productos
+- Catálogo con categorías (almuerzos y cenas / desayunos y meriendas),
+  buscador, sabores con precio propio y fotos encuadrables desde el panel
+- Carrito que se actualiza solo con los precios y el stock reales
+- Cuentas de cliente: registro, login, recuperar contraseña e historial
+- Checkout con **Mercado Pago** o **efectivo** (se coordina por WhatsApp)
+- Webhook de Mercado Pago que marca los pedidos como pagados
+- Aviso por WhatsApp a la tienda de cada pedido nuevo (cuando Meta aprueba
+  la plantilla) y botón para que el cliente mande su pedido por WhatsApp
+- Panel de administración en `/admin` (o el botón en "Mi cuenta" si sos
+  admin): resumen, productos y pedidos
+- SEO: sitemap, robots, títulos por página, Google Analytics y Search Console
+- Seguridad en la base (Row Level Security): cada cliente ve solo lo suyo,
+  los precios se calculan en el servidor y nadie puede hacerse admin solo
 
-**Modo demo**: si todavía no configuraste Supabase, la tienda igual se
-puede navegar con 6 productos de ejemplo, para que puedas ver el diseño
-antes de conectar todo.
+## Variables de entorno
 
-## 1. Instalación local
+Van en `.env.local` (para probar en la compu) y en Vercel → Settings →
+Environment Variables (para el sitio publicado). Nunca se suben al repo.
 
-Necesitás [Node.js](https://nodejs.org) 20 o superior instalado.
+| Variable | Para qué |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API (⚠️ secreta) |
+| `MERCADOPAGO_ACCESS_TOKEN` | Mercado Pago Developers → credenciales de producción (⚠️ secreta) |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.mielnaturalmenterico.com.ar` |
+| `WHATSAPP_TOKEN` | Token permanente del usuario del sistema de Meta (⚠️ secreta) |
+| `WHATSAPP_PHONE_NUMBER_ID` | ID del número que envía los avisos |
+| `WHATSAPP_AVISO_DESTINOS` | Números que reciben los avisos, separados por coma (`549…`) |
+| `WHATSAPP_PLANTILLA` | Opcional: `nuevo_pedido` (por defecto, con botón) o `aviso_pedido` |
+
+Si faltan las de WhatsApp, simplemente no se mandan avisos. El número de
+WhatsApp de la tienda, el mail y el Instagram están en `src/lib/contacto.ts`
+y `src/components/Footer.tsx`; los códigos de Google, en `src/lib/sitio.ts`.
+
+## Probar en la compu
+
+Necesitás [Node.js](https://nodejs.org) 20 o superior.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abrí http://localhost:3000 — vas a ver la tienda funcionando en modo demo.
+Y abrí http://localhost:3000.
 
-## 2. Conectar Supabase (base de datos + cuentas)
+## Base de datos (Supabase)
 
-1. Creá una cuenta gratis en [supabase.com](https://supabase.com) y un
-   proyecto nuevo.
-2. En tu proyecto, andá a **SQL Editor** → **New query**, pegá todo el
-   contenido de `supabase/schema.sql` de este repo, y ejecutalo. Esto crea
-   las tablas de productos, pedidos y perfiles, con las reglas de
-   seguridad ya configuradas.
+- `supabase/schema.sql`: el esquema completo, para crear una base nueva
+  desde cero (SQL Editor → New query → pegar y ejecutar).
+- `supabase/migraciones/`: los cambios que se fueron haciendo, en orden de
+  fecha. Si la base ya existía, se ejecutan solo los que falten.
 
-   > Si tu base ya estaba creada con las categorías viejas ("cocidos" y
-   > "congelados"), ejecutá también
-   > `supabase/migraciones/2026-09-22-categorias-comidas.sql` para pasar a
-   > "Almuerzos y cenas" y "Desayunos y meriendas".
-   >
-   > Si tu base ya estaba creada antes de que existieran los "sabores"
-   > (variantes) de producto, ejecutá también
-   > `supabase/migraciones/2026-09-24-sabores.sql`.
-3. Andá a **Project Settings → API** y copiá:
-   - `Project URL` → pegalo en `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon public key` → pegalo en `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `service_role key` → pegalo en `SUPABASE_SERVICE_ROLE_KEY`
-     (⚠️ esta clave es secreta, nunca la subas a un repo público ni la
-     pongas en código del navegador)
-4. Copiá `.env.example` como `.env.local` y completá esos tres valores.
+### Hacer administradora a alguien
 
-### Convertir a Sol o Abril en administradoras
-
-Una de ustedes tiene que **registrarse primero como cliente normal** en
-`/cuenta/registro`. Después, en Supabase → **SQL Editor**, ejecutá
-(reemplazando el email):
+La persona se registra primero como cliente en `/cuenta/registro`. Después,
+en Supabase → SQL Editor:
 
 ```sql
 update public.perfiles set rol = 'admin'
-where id = (select id from auth.users where email = 'sol@ejemplo.com');
+where id = (select id from auth.users where email = 'mail@ejemplo.com');
 ```
 
-Con eso ya va a poder entrar a `/admin` y cargar los productos reales
-(sacando los de ejemplo, que solo se muestran cuando no hay productos
-cargados en la base).
+## Publicar cambios
 
-## 3. Conectar Mercado Pago
-
-1. Entrá a tu cuenta de [Mercado Pago Developers](https://www.mercadopago.com.ar/developers/panel)
-2. Creá una aplicación y andá a **Credenciales de producción** (o de
-   prueba, para probar sin cobrar de verdad)
-3. Copiá el **Access Token** y pegalo en `MERCADOPAGO_ACCESS_TOKEN` en tu `.env.local`
-4. Cuando despliegues a producción, actualizá también
-   `NEXT_PUBLIC_SITE_URL` con tu dominio real (por ejemplo
-   `https://mielrico.com.ar`) — Mercado Pago lo necesita para saber a
-   dónde devolver al cliente después de pagar.
-
-Mientras `MERCADOPAGO_ACCESS_TOKEN` no esté configurado, el botón de
-pago simula una compra exitosa para que puedas probar el flujo completo.
-
-## 4. Subir el proyecto a GitHub
+Cada `git push` a `main` publica solo en Vercel:
 
 ```bash
-git init
 git add .
-git commit -m "Primera versión de la tienda Miel"
-git branch -M main
-git remote add origin https://github.com/TU-USUARIO/miel-tienda.git
-git push -u origin main
+git commit -m "Qué cambié"
+git push
 ```
 
-(`.env.local` no se sube nunca, ya está en `.gitignore` — tus claves
-quedan seguras.)
-
-## 5. Desplegar en Vercel (gratis)
-
-1. Entrá a [vercel.com](https://vercel.com) e iniciá sesión con tu cuenta
-   de GitHub.
-2. "Add New Project" → elegí el repositorio `miel-tienda`.
-3. En "Environment Variables" cargá las mismas variables de tu
-   `.env.local` (las 4 de Supabase/Mercado Pago + `NEXT_PUBLIC_SITE_URL`
-   con la URL que Vercel te va a asignar, o tu dominio propio).
-4. Deploy. En un par de minutos vas a tener la tienda online.
-
-## 6. Comprar y conectar tu dominio
-
-Comprá el dominio donde prefieras (Namecheap, DonWeb, NIC Argentina para
-`.com.ar`, etc.) y en Vercel andá a **Settings → Domains** para
-conectarlo. Vercel te va a decir exactamente qué registros DNS agregar
-en el panel de tu proveedor de dominio.
-
-## Estructura del proyecto
+## Estructura
 
 ```
 src/
-  app/                 → páginas y rutas (App Router de Next.js)
+  app/                 → páginas y rutas
     admin/             → panel de administración
-    cuenta/            → login, registro, historial de pedidos
-    checkout/          → flujo de pago
-    productos/[id]/    → detalle de producto
-    api/               → endpoints del servidor (checkout, webhook, admin)
-  components/          → componentes de React reutilizables
-  lib/                 → helpers (Supabase, formato de precios, productos)
-  types/               → tipos de TypeScript compartidos
-supabase/
-  schema.sql           → esquema completo de la base de datos
-  migraciones/         → cambios para bases que ya estaban creadas
+    cuenta/            → login, registro, contraseña e historial
+    checkout/          → compra, éxito y error
+    productos/         → catálogo y detalle de producto
+    api/               → checkout, webhook de Mercado Pago y API del panel
+    wa/[numero]/       → redirección al chat de WhatsApp (botón del aviso)
+  components/          → piezas de la interfaz
+  lib/                 → Supabase, avisos, formato, contacto, SEO
+  proxy.ts             → sesión y protección de /admin y /cuenta/pedidos
+supabase/              → esquema y migraciones de la base
 ```
-
-## Próximos pasos posibles
-
-- Subir fotos reales de los productos (podés usar Supabase Storage o
-  simplemente pegar una URL de imagen en el panel de admin)
-- Agregar envío de emails de confirmación (Resend, por ejemplo)
-- Sumar zona de envío con costo automático según el barrio

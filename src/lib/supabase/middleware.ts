@@ -9,7 +9,7 @@ export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   // Si todavía no configuraste Supabase (ver README), dejamos pasar todo
-  // sin verificar sesión, para que el catálogo de demostración funcione.
+  // sin verificar sesión.
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

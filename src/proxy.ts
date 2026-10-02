@@ -1,7 +1,10 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-export async function middleware(request: NextRequest) {
+// Antes se llamaba "middleware" (Next 16 lo renombró a "proxy"): corre
+// antes de cada página para refrescar la sesión y proteger /admin y
+// /cuenta/pedidos (ver updateSession).
+export async function proxy(request: NextRequest) {
   return await updateSession(request);
 }
 

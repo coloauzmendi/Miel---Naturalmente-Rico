@@ -4,11 +4,12 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { rutaSegura } from "@/lib/navegacion";
 
 function RegistroForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") ?? "/";
+  const redirect = rutaSegura(searchParams.get("redirect"));
 
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");

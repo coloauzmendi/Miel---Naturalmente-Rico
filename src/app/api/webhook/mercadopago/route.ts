@@ -10,8 +10,16 @@ import { avisarPedidoPorWhatsapp } from "@/lib/avisos";
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const paymentId = body?.data?.id ?? request.nextUrl.searchParams.get("id");
+    // MP avisa en dos formatos: JSON ({ type, data: { id } }) o, el viejo,
+    // con todo en la URL (?topic=payment&id=...) y a veces sin cuerpo.
+    const body = await request.json().catch(() => ({}));
+    const parametros = request.nextUrl.searchParams;
+    const tipo =
+      body?.type ?? body?.topic ?? parametros.get("type") ?? parametros.get("topic");
+    // También avisa de "merchant_order" y otros: solo nos importan los pagos.
+    if (tipo && tipo !== "payment") return NextResponse.json({ ok: true });
+
+    const paymentId = body?.data?.id ?? parametros.get("data.id") ?? parametros.get("id");
 
     if (!paymentId || !process.env.MERCADOPAGO_ACCESS_TOKEN) {
       return NextResponse.json({ ok: true });
@@ -76,9 +84,10 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ ok: true });
-  } catch {
-    // Mercado Pago reintenta si no devolvemos 200, así que devolvemos
-    // 200 igual y confiamos en los reintentos para casos raros.
-    return NextResponse.json({ ok: true });
+  } catch (error) {
+    // Respondemos con error a propósito: así Mercado Pago reintenta más
+    // tarde y el pago no queda sin registrar por una falla pasajera.
+    console.error("Webhook de Mercado Pago falló:", error);
+    return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
