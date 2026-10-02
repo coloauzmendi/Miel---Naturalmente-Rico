@@ -66,6 +66,9 @@ export default function Home() {
             Consultar por WhatsApp
           </a>
         </div>
+        <p className="mt-5 text-sm text-crema-alta/75">
+          o deslizá hacia abajo y conocé más
+        </p>
       </HeroFotos>
 
       <section className="mx-auto max-w-6xl px-5 py-14">
