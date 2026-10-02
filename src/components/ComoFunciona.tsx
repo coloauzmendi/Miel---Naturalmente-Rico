@@ -13,13 +13,13 @@ const pasos = [
     emoji: "💳",
     titulo: "Elegí método de pago",
     texto:
-      "Podés pagar a través de Mercado Pago o abonar en efectivo cuando tengas tu pedido en mano. ¡No olvides enviarnos el comprobante de transferencia!",
+      "Completa los datos, y elegí tu método de pago preferido. Podés pagar a través de Mercado Pago o abonar en efectivo cuando tengas tu pedido en mano.",
   },
   {
     emoji: "📲",
     titulo: "Coordinamos la entrega",
     texto:
-      "Una vez realizada la compra, vas a ver un botón que te redirige a nuestro chat de WhatsApp, donde coordinamos juntas la entrega de tu pedido.",
+      "Una vez realizada la compra, nos vamos a comunicar con vos, así coordinamos juntas la entrega de tu pedido.",
   },
   {
     emoji: "🍽️",

@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { CarritoProvider } from "@/components/CarritoContext";
 import CarritoFlotante from "@/components/CarritoFlotante";
 import Marquee from "@/components/Marquee";
+import ScrollSuave from "@/components/ScrollSuave";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://miel-naturalmente-rico.vercel.app"),
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex-1">{children}</main>
           <Footer />
           <CarritoFlotante />
+          <ScrollSuave />
         </CarritoProvider>
       </body>
     </html>

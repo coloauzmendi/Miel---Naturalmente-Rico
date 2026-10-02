@@ -1,6 +1,8 @@
 import { MessageCircle, MapPin } from "lucide-react";
 import { linkWhatsapp, WHATSAPP_TIENDA_VISIBLE } from "@/lib/contacto";
 
+const INSTAGRAM_URL = "https://instagram.com/miel.naturalmenterico/";
+
 function IconoInstagram({ size = 16 }: { size?: number }) {
   return (
     <svg
@@ -45,7 +47,7 @@ export default function Footer() {
             <MessageCircle size={16} /> WhatsApp: {WHATSAPP_TIENDA_VISIBLE}
           </a>
           <a
-            href="https://instagram.com/miel.naturalmenterico/"
+            href={INSTAGRAM_URL}
             className="mb-2 flex items-center gap-2 text-crema-alta/80 hover:text-crema-alta"
           >
             <IconoInstagram size={16} /> @miel.naturalmenterico
@@ -56,11 +58,19 @@ export default function Footer() {
         </div>
 
         <div className="text-sm">
-          <p className="mb-3 font-medium">Horarios de pedidos</p>
-          <p className="text-crema-alta/80">Lunes a viernes, 9 a 18 hs</p>
-          <p className="text-crema-alta/80">
-            Entregas: martes, jueves y sábados
+          <p className="mb-3 font-medium">Seguinos</p>
+          <p className="max-w-xs text-crema-alta/80">
+            Mirá lo que cocinamos día a día, enterate de todas las novedades y recetas en nuestro
+            Instagram.
           </p>
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-crema-alta px-5 py-2.5 font-medium text-marron transition-colors hover:bg-white"
+          >
+            <IconoInstagram size={18} /> Seguinos en Instagram
+          </a>
         </div>
       </div>
       <div className="border-t border-crema-alta/15 px-5 py-4 text-center text-xs text-crema-alta/60">
