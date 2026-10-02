@@ -186,19 +186,19 @@ export default function AdminProductosClient({
       </button>
 
       {mostrarForm && (
-        <div className="mb-8 grid gap-3 rounded-2xl border border-linea bg-crema-alta p-4 sm:grid-cols-2 sm:p-5">
+        <div className="mb-8 grid grid-cols-1 gap-3 rounded-2xl border border-linea bg-crema-alta p-4 sm:grid-cols-2 sm:p-5">
           <input
             placeholder="Nombre"
             value={form.nombre}
             onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-            className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+            className="w-full min-w-0 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
           />
           <select
             value={form.categoria}
             onChange={(e) =>
               setForm({ ...form, categoria: e.target.value as Categoria })
             }
-            className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+            className="w-full min-w-0 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
           >
             {CATEGORIAS.map((c) => (
               <option key={c.valor} value={c.valor}>
@@ -210,7 +210,7 @@ export default function AdminProductosClient({
             placeholder="Descripción"
             value={form.descripcion}
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-            className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva sm:col-span-2"
+            className="w-full min-w-0 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva sm:col-span-2"
           />
           <input
             type="number"
@@ -219,7 +219,7 @@ export default function AdminProductosClient({
             onChange={(e) =>
               setForm({ ...form, precio: Number(e.target.value) })
             }
-            className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+            className="w-full min-w-0 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
           />
           <input
             type="number"
@@ -228,7 +228,7 @@ export default function AdminProductosClient({
             onChange={(e) =>
               setForm({ ...form, stock: Number(e.target.value) })
             }
-            className="rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+            className="w-full min-w-0 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
           />
           <div className="flex flex-col gap-2 sm:col-span-2">
             <label className="text-sm text-tinta">
@@ -281,7 +281,7 @@ export default function AdminProductosClient({
                     e.target.value = "";
                   }}
                   disabled={subiendoImagen}
-                  className="text-sm text-tinta/70 file:mr-3 file:rounded-full file:border-0 file:bg-oliva file:px-4 file:py-2 file:text-sm file:text-crema-alta hover:file:bg-oliva-claro"
+                  className="w-full min-w-0 max-w-full text-sm text-tinta/70 file:mr-3 file:rounded-full file:border-0 file:bg-oliva file:px-4 file:py-2 file:text-sm file:text-crema-alta hover:file:bg-oliva-claro"
                 />
                 {subiendoImagen && (
                   <span className="text-sm text-tinta/50">Subiendo…</span>
@@ -307,7 +307,7 @@ export default function AdminProductosClient({
                   onChange={(e) =>
                     actualizarSabor(indice, { nombre: e.target.value })
                   }
-                  className="flex-1 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+                  className="min-w-0 flex-1 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
                 />
                 <input
                   type="number"
@@ -316,7 +316,7 @@ export default function AdminProductosClient({
                   onChange={(e) =>
                     actualizarSabor(indice, { precio: Number(e.target.value) })
                   }
-                  className="w-28 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
+                  className="w-24 shrink-0 rounded-lg border border-linea bg-white px-3 py-2 text-sm outline-none focus:border-oliva"
                 />
                 <button
                   type="button"
