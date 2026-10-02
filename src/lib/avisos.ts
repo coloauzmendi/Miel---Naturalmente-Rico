@@ -18,7 +18,8 @@ import type { Pedido, PedidoItem } from "@/types";
  *   WHATSAPP_TOKEN            token permanente (usuario del sistema)
  *   WHATSAPP_PHONE_NUMBER_ID  ID del número que envía
  *   WHATSAPP_AVISO_DESTINOS   números que reciben el aviso, separados por coma
- *   WHATSAPP_PLANTILLA        nombre de la plantilla (opcional)
+ *   WHATSAPP_PLANTILLA        "nuevo_pedido" (con botón, por defecto) o
+ *                             "aviso_pedido" (sin botón)
  *   WHATSAPP_PLANTILLA_IDIOMA código de idioma de la plantilla (opcional)
  *
  * Nunca tira error: si el aviso falla, el pedido sigue igual.
@@ -37,6 +38,10 @@ export async function avisarPedidoPorWhatsapp(pedidoId: string) {
     if (!variables) return;
 
     const version = process.env.WHATSAPP_API_VERSION ?? "v25.0";
+    const plantilla = process.env.WHATSAPP_PLANTILLA ?? "nuevo_pedido";
+    // "nuevo_pedido" tiene el botón "Escribirle al cliente"; "aviso_pedido"
+    // es la misma plantilla sin botón (el teléfono se toca en el texto).
+    const conBoton = plantilla === "nuevo_pedido";
     await Promise.all(
       destinos.map(async (destino) => {
         const respuesta = await fetch(
@@ -52,7 +57,7 @@ export async function avisarPedidoPorWhatsapp(pedidoId: string) {
               to: destino,
               type: "template",
               template: {
-                name: process.env.WHATSAPP_PLANTILLA ?? "nuevo_pedido",
+                name: plantilla,
                 language: {
                   code: process.env.WHATSAPP_PLANTILLA_IDIOMA ?? "es_AR",
                 },
@@ -64,16 +69,22 @@ export async function avisarPedidoPorWhatsapp(pedidoId: string) {
                       text,
                     })),
                   },
-                  {
-                    // Botón "Escribirle al cliente": la plantilla tiene la
-                    // URL https://www.mielnaturalmenterico.com.ar/wa/{{1}}
-                    // (Meta no deja poner wa.me directo en un botón) y acá
-                    // completamos el número; /wa redirige al chat.
-                    type: "button",
-                    sub_type: "url",
-                    index: "0",
-                    parameters: [{ type: "text", text: variables.whatsappCliente }],
-                  },
+                  ...(conBoton
+                    ? [
+                        {
+                          // Botón "Escribirle al cliente": la plantilla tiene la
+                          // URL https://www.mielnaturalmenterico.com.ar/wa/{{1}}
+                          // (Meta no deja poner wa.me directo en un botón) y
+                          // acá completamos el número; /wa redirige al chat.
+                          type: "button",
+                          sub_type: "url",
+                          index: "0",
+                          parameters: [
+                            { type: "text", text: variables.whatsappCliente },
+                          ],
+                        },
+                      ]
+                    : []),
                 ],
               },
             }),

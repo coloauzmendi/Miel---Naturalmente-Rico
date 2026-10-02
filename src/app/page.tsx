@@ -41,8 +41,10 @@ export default function Home() {
           <br />
           lista cuando la necesites.
         </h1>
-        <p className="mx-auto mt-5 max-w-xl text-base text-crema-alta/85
-        ">
+        <p
+          className="mx-auto mt-5 max-w-xl text-base text-crema-alta/85
+        "
+        >
           Alimentos ricos y nutricionalmente altos para acompañar tus comidas.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -104,12 +106,28 @@ export default function Home() {
           <PilaFotosNosotras />
           <div>
             <h2 className="font-display text-3xl text-tinta">Sobre nosotras</h2>
-            <p className="mt-4 text-tinta/70">
-              Empezamos cocinando para amigos y familia, y hoy Miel es nuestro
-              trabajo de todos los días. Elegimos ingredientes de estación,
-              cocinamos en tandas chicas y congelamos lo que se entrega en los
-              días siguientes para que llegue tan fresco como salió de la olla.
-            </p>
+            <div className="mt-4 text-tinta/70">
+              <p>
+                Empezamos cocinando para amigos y familia, y hoy Miel es
+                nuestro trabajo de todos los días. Elegimos ingredientes de
+                estación, cocinamos en tandas chicas y congelamos lo que se
+                entrega en los días siguientes para que llegue tan fresco como
+                salió de la olla.
+              </p>
+              {/* Separador fino y corto, del color del header y el footer */}
+              <span aria-hidden className="my-5 block h-px w-12 bg-marron" />
+              <p>
+                Nuestro compromiso es que el producto que llega a tu mesa tenga
+                valor nutricional alto; entendiendo que preparar un plato en 10
+                minutos, también puede ser nutritivo, rico, sano, fresco y no
+                un procesado.
+              </p>
+              <span aria-hidden className="my-5 block h-px w-12 bg-marron" />
+              <p>
+                El día a día en la cocina es un constante aprendizaje, y
+                estamos dispuestas a seguir creciendo.
+              </p>
+            </div>
             <Link
               href="#contacto"
               className="mt-6 inline-block text-sm font-medium text-ciruela underline underline-offset-4"
