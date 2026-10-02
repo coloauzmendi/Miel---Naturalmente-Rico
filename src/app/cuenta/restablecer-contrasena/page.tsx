@@ -25,9 +25,31 @@ export default function RestablecerContrasenaPage() {
       }
     });
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setListo(true);
-    });
+    // El mail (plantilla "Reset Password" de Supabase) trae un token_hash:
+    // lo validamos acá, así el link funciona aunque se abra en otro
+    // dispositivo o navegador distinto del que pidió el cambio.
+    const parametros = new URLSearchParams(window.location.search);
+    const tokenHash = parametros.get("token_hash");
+
+    if (tokenHash) {
+      supabase.auth
+        .verifyOtp({ type: "recovery", token_hash: tokenHash })
+        .then(({ error }) => {
+          if (error) {
+            setError(
+              "El link venció o ya se usó. Pedí uno nuevo desde \"Olvidé mi contraseña\".",
+            );
+          } else {
+            setListo(true);
+          }
+          // Sacamos el token de la barra de direcciones.
+          window.history.replaceState(null, "", window.location.pathname);
+        });
+    } else {
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) setListo(true);
+      });
+    }
 
     return () => suscripcion.subscription.unsubscribe();
   }, []);
@@ -77,8 +99,8 @@ export default function RestablecerContrasenaPage() {
           Abrí el link desde tu email
         </h1>
         <p className="mt-3 text-tinta/70">
-          Si llegaste a esta página sin tocar el link del email, o el link ya
-          venció, pedí uno nuevo.
+          {error ??
+            "Si llegaste a esta página sin tocar el link del email, o el link ya venció, pedí uno nuevo."}
         </p>
         <Link
           href="/cuenta/olvide-contrasena"
