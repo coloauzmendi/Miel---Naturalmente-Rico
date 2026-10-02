@@ -38,6 +38,10 @@ export default function OlvideContrasenaPage() {
           Si existe una cuenta con ese email, te enviamos un link para elegir
           una contraseña nueva.
         </p>
+        <p className="mt-3 text-sm text-tinta/60">
+          ¿No lo ves? Revisá la carpeta de <strong>spam</strong> o{" "}
+          <strong>promociones</strong>: a veces llega ahí.
+        </p>
       </div>
     );
   }
