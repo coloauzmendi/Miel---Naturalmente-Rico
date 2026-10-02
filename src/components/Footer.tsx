@@ -1,5 +1,9 @@
-import { MessageCircle, MapPin } from "lucide-react";
-import { linkWhatsapp, WHATSAPP_TIENDA_VISIBLE } from "@/lib/contacto";
+import { MessageCircle, MapPin, Mail } from "lucide-react";
+import {
+  EMAIL_TIENDA,
+  linkWhatsapp,
+  WHATSAPP_TIENDA_VISIBLE,
+} from "@/lib/contacto";
 
 const INSTAGRAM_URL = "https://instagram.com/miel.naturalmenterico/";
 
@@ -51,6 +55,12 @@ export default function Footer() {
             className="mb-2 flex items-center gap-2 text-crema-alta/80 hover:text-crema-alta"
           >
             <IconoInstagram size={16} /> @miel.naturalmenterico
+          </a>
+          <a
+            href={`mailto:${EMAIL_TIENDA}`}
+            className="mb-2 flex items-center gap-2 break-all text-crema-alta/80 hover:text-crema-alta"
+          >
+            <Mail size={16} className="shrink-0" /> {EMAIL_TIENDA}
           </a>
           <p className="flex items-center gap-2 text-crema-alta/80">
             <MapPin size={16} /> Retiro y envíos en Carcaraña y alrededores
