@@ -38,9 +38,12 @@ export default function ComoFunciona() {
     const elemento = contenedorRef.current;
     if (!elemento) return;
 
+    // Sin detector de visibilidad (navegadores muy viejos) se muestra
+    // enseguida; va en un setTimeout para no cambiar el estado en medio
+    // del efecto.
     if (typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return;
+      const inmediato = setTimeout(() => setVisible(true), 0);
+      return () => clearTimeout(inmediato);
     }
 
     const observador = new IntersectionObserver(

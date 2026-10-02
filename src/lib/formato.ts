@@ -5,3 +5,28 @@ export function formatearPrecio(precio: number): string {
     maximumFractionDigits: 0,
   }).format(precio);
 }
+
+// Siempre en hora argentina: en Vercel el servidor corre en UTC y, sin
+// esto, las fechas y horas se correrían 3 horas.
+const ZONA_HORARIA = "America/Argentina/Buenos_Aires";
+
+export function formatearFechaHora(fecha: string | Date): string {
+  return new Intl.DateTimeFormat("es-AR", {
+    timeZone: ZONA_HORARIA,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date(fecha));
+}
+
+export function formatearFecha(fecha: string | Date): string {
+  return new Intl.DateTimeFormat("es-AR", {
+    timeZone: ZONA_HORARIA,
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  }).format(new Date(fecha));
+}

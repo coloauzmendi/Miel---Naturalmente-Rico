@@ -4,7 +4,7 @@ import { formatearPrecio } from "@/lib/formato";
 export default async function AdminDashboard() {
   const supabase = await createClient();
 
-  const { data: pedidos } = await supabase.from("pedidos").select("total, estado");
+  const { data: pedidos } = await supabase.from("pedidos").select("total, estado, metodo_pago");
   const { count: totalProductos } = await supabase
     .from("productos")
     .select("*", { count: "exact", head: true });
@@ -16,8 +16,15 @@ export default async function AdminDashboard() {
     pedidos
       ?.filter((p) => p.estado !== "cancelado" && p.estado !== "pendiente_pago")
       .reduce((acc, p) => acc + p.total, 0) ?? 0;
+  // Por preparar: los pagados con MP y los de efectivo recién hechos (que
+  // quedan en "pendiente_pago" porque se cobran al entregar).
   const pedidosPendientes =
-    pedidos?.filter((p) => p.estado === "pagado" || p.estado === "en_preparacion").length ?? 0;
+    pedidos?.filter(
+      (p) =>
+        p.estado === "pagado" ||
+        p.estado === "en_preparacion" ||
+        (p.estado === "pendiente_pago" && p.metodo_pago === "efectivo"),
+    ).length ?? 0;
 
   return (
     <div>

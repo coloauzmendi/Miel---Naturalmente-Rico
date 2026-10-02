@@ -36,10 +36,15 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
   const inicioToque = useRef<number | null>(null);
 
   // Detecta el tamaño de pantalla en el navegador (en el server todavía no
-  // se sabe), para armar la lista de fotos que corresponde.
+  // se sabe), para armar la lista de fotos que corresponde. Si cambia (por
+  // ejemplo al girar el celular cruzando el breakpoint) cambia la lista de
+  // fotos, así que volvemos a arrancar desde la primera.
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
-    const actualizar = () => setEsMovil(mediaQuery.matches);
+    const actualizar = () => {
+      setEsMovil(mediaQuery.matches);
+      setIndice(0);
+    };
     actualizar();
     mediaQuery.addEventListener("change", actualizar);
     return () => mediaQuery.removeEventListener("change", actualizar);
@@ -48,12 +53,6 @@ export default function HeroFotos({ children }: { children: ReactNode }) {
   const fotosVisibles = esMovil
     ? fotos.filter((foto) => !foto.ocultaEnMovil)
     : fotos;
-
-  // Si cambia la cantidad de fotos disponibles (por ejemplo al girar el
-  // celular cruzando el breakpoint), volvemos a arrancar del principio.
-  useEffect(() => {
-    setIndice(0);
-  }, [fotosVisibles.length]);
 
   // Se reinicia en cada cambio para que, al tocar una flecha, la próxima
   // foto espere el tiempo completo.

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { EstadoPedido, Pedido, PedidoItem } from "@/types";
-import { formatearPrecio } from "@/lib/formato";
+import { formatearFechaHora, formatearPrecio } from "@/lib/formato";
 
 const ESTADOS: EstadoPedido[] = [
   "pendiente_pago",
@@ -51,7 +51,7 @@ export default function AdminPedidosClient({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <p className="text-sm text-tinta/60">
-                {new Date(pedido.created_at).toLocaleString("es-AR")}
+                {formatearFechaHora(pedido.created_at)} hs
               </p>
               <p className="font-display text-lg text-tinta">{formatearPrecio(pedido.total)}</p>
               <p className="text-sm text-tinta/70">
