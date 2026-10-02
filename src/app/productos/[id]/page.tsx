@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { obtenerProductoPorId } from "@/lib/productos";
@@ -7,6 +8,31 @@ import BotonAgregar from "@/components/BotonAgregar";
 import GaleriaProducto from "@/components/GaleriaProducto";
 import { Clock3, MessageCircle, Snowflake } from "lucide-react";
 import { linkWhatsapp } from "@/lib/contacto";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const producto = await obtenerProductoPorId(id);
+  if (!producto) return {};
+
+  const descripcion =
+    producto.descripcion?.slice(0, 160) ||
+    `${producto.nombre}: comida casera cocida y congelada, sin conservantes.`;
+
+  return {
+    title: producto.nombre,
+    description: descripcion,
+    alternates: { canonical: `/productos/${producto.id}` },
+    openGraph: {
+      title: producto.nombre,
+      description: descripcion,
+      images: producto.imagen_url ? [producto.imagen_url] : undefined,
+    },
+  };
+}
 
 export default async function ProductoDetalle({
   params,

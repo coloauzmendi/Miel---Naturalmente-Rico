@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { productosDemo } from "@/lib/productos-demo";
 import { Producto } from "@/types";
@@ -21,7 +22,11 @@ export async function obtenerProductos(): Promise<Producto[]> {
   return data as Producto[];
 }
 
-export async function obtenerProductoPorId(id: string): Promise<Producto | null> {
+// Con cache(), si la metadata y la página piden el mismo producto en la
+// misma carga, se consulta la base una sola vez.
+export const obtenerProductoPorId = cache(async function obtenerProductoPorId(
+  id: string,
+): Promise<Producto | null> {
   if (!supabaseConfigurado) {
     return productosDemo.find((p) => p.id === id) ?? null;
   }
@@ -35,4 +40,4 @@ export async function obtenerProductoPorId(id: string): Promise<Producto | null>
 
   if (error || !data) return null;
   return data as Producto;
-}
+});

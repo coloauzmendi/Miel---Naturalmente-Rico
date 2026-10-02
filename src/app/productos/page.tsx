@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { obtenerProductos } from "@/lib/productos";
 import { esCategoria } from "@/lib/categorias";
 import CatalogoSeccion from "@/components/CatalogoSeccion";
+
+export const metadata: Metadata = {
+  title: "Productos",
+  description:
+    "Tartas, pizzas, malfattis, pancakes, granola y más: comida casera cocida y congelada, lista en minutos.",
+  alternates: { canonical: "/productos" },
+};
 
 export default async function ProductosPage({
   searchParams,

@@ -6,27 +6,39 @@ import { CarritoProvider } from "@/components/CarritoContext";
 import CarritoFlotante from "@/components/CarritoFlotante";
 import Marquee from "@/components/Marquee";
 import ScrollSuave from "@/components/ScrollSuave";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import {
+  GOOGLE_ANALYTICS_ID,
+  GOOGLE_SITE_VERIFICATION,
+  SITIO_DESCRIPCION,
+  SITIO_NOMBRE,
+  SITIO_URL,
+} from "@/lib/sitio";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://miel-naturalmente-rico.vercel.app"),
-  title: "Miel, naturalmente rico | Comida casera cocida y congelada",
-  description:
-    "Alimentos cocidos y congelados, sin conservantes ni aditivos. Pedí online y recibí en tu casa.",
+  metadataBase: new URL(SITIO_URL),
+  title: {
+    default: `${SITIO_NOMBRE} | Comida casera cocida y congelada`,
+    // Las páginas que definen su propio título (ej: un producto) quedan
+    // como "Pancakes de almendras | Miel, naturalmente rico".
+    template: `%s | ${SITIO_NOMBRE}`,
+  },
+  description: SITIO_DESCRIPCION,
   openGraph: {
-    title: "Miel, naturalmente rico",
-    description:
-      "Alimentos cocidos y congelados, sin conservantes ni aditivos. Pedí online y recibí en tu casa.",
-    url: "https://miel-naturalmente-rico.vercel.app",
-    siteName: "Miel, naturalmente rico",
+    title: SITIO_NOMBRE,
+    description: SITIO_DESCRIPCION,
+    url: SITIO_URL,
+    siteName: SITIO_NOMBRE,
     locale: "es_AR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Miel, naturalmente rico",
-    description:
-      "Alimentos cocidos y congelados, sin conservantes ni aditivos. Pedí online y recibí en tu casa.",
+    title: SITIO_NOMBRE,
+    description: SITIO_DESCRIPCION,
   },
+  // Verificación de Search Console (método "etiqueta HTML").
+  verification: { google: GOOGLE_SITE_VERIFICATION },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -55,6 +67,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <ScrollSuave />
         </CarritoProvider>
       </body>
+      {/* Solo en producción, para no sumar visitas al probar en localhost */}
+      {process.env.NODE_ENV === "production" && (
+        <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} />
+      )}
     </html>
   );
 }

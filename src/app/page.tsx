@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import ProductosInicio from "@/components/ProductosInicio";
 import PilaFotosNosotras from "@/components/PilaFotosNosotras";
@@ -7,6 +8,10 @@ import ComoFunciona from "@/components/ComoFunciona";
 import ComunidadMiel from "@/components/ComunidadMiel";
 import { Leaf, Snowflake, ShieldCheck } from "lucide-react";
 import { linkWhatsapp } from "@/lib/contacto";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (
