@@ -4,8 +4,8 @@ Tienda online de comida casera cocida y congelada de Sol y Abril:
 **https://www.mielnaturalmenterico.com.ar**
 
 Hecha con **Next.js 16**, **Tailwind CSS 4**, **Supabase** (base de datos,
-cuentas y fotos), **Mercado Pago** (pagos) y la **API de WhatsApp** (avisos
-de pedidos nuevos). Publicada en **Vercel**.
+cuentas y fotos) y la **API de WhatsApp** (avisos de pedidos nuevos).
+Publicada en **Vercel**.
 
 ## Qué incluye
 
@@ -13,8 +13,13 @@ de pedidos nuevos). Publicada en **Vercel**.
   buscador, sabores con precio propio y fotos encuadrables desde el panel
 - Carrito que se actualiza solo con los precios y el stock reales
 - Cuentas de cliente: registro, login, recuperar contraseña e historial
-- Checkout con **Mercado Pago** o **efectivo** (se coordina por WhatsApp)
-- Webhook de Mercado Pago que marca los pedidos como pagados
+- Checkout con **transferencia** (muestra alias y titular, y el cliente
+  manda el comprobante por WhatsApp) o **efectivo** (se coordina por
+  WhatsApp). Los pedidos quedan "pendiente de pago" hasta que se marcan
+  como pagados desde el panel. El alias y el titular están en
+  `src/lib/contacto.ts`.
+- Mercado Pago está desactivado (por las comisiones), pero el código y el
+  webhook quedaron listos por si se vuelve a ofrecer
 - Aviso por WhatsApp a la tienda de cada pedido nuevo (cuando Meta aprueba
   la plantilla) y botón para que el cliente mande su pedido por WhatsApp
 - Panel de administración en `/admin` (o el botón en "Mi cuenta" si sos
@@ -33,7 +38,7 @@ Environment Variables (para el sitio publicado). Nunca se suben al repo.
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API (⚠️ secreta) |
-| `MERCADOPAGO_ACCESS_TOKEN` | Mercado Pago Developers → credenciales de producción (⚠️ secreta) |
+| `MERCADOPAGO_ACCESS_TOKEN` | Solo si se reactiva Mercado Pago: credenciales de producción (⚠️ secreta) |
 | `NEXT_PUBLIC_SITE_URL` | `https://www.mielnaturalmenterico.com.ar` |
 | `WHATSAPP_TOKEN` | Token permanente del usuario del sistema de Meta (⚠️ secreta) |
 | `WHATSAPP_PHONE_NUMBER_ID` | ID del número que envía los avisos |
@@ -91,7 +96,7 @@ src/
     cuenta/            → login, registro, contraseña e historial
     checkout/          → compra, éxito y error
     productos/         → catálogo y detalle de producto
-    api/               → checkout, webhook de Mercado Pago y API del panel
+    api/               → checkout, API del panel y webhook de Mercado Pago (sin uso)
     wa/[numero]/       → redirección al chat de WhatsApp (botón del aviso)
   components/          → piezas de la interfaz
   lib/                 → Supabase, avisos, formato, contacto, SEO
