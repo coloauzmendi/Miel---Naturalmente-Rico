@@ -13,7 +13,7 @@ const pasos = [
     emoji: "💳",
     titulo: "Elegí método de pago",
     texto:
-      "Completá los datos y elegí tu método de pago preferido. Podés pagar a través de Mercado Pago o abonar en efectivo cuando tengas tu pedido en mano.",
+      "Completá los datos y elegí tu método de pago preferido. Podés pagar por transferencia o abonar en efectivo cuando tengas tu pedido en mano.",
   },
   {
     emoji: "📲",

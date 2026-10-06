@@ -134,7 +134,7 @@ create table if not exists public.pedidos (
   mp_preference_id text,
   mp_payment_id text,
   metodo_pago text not null default 'mercadopago' check (
-    metodo_pago in ('mercadopago', 'efectivo')
+    metodo_pago in ('mercadopago', 'efectivo', 'transferencia')
   ),
   created_at timestamptz not null default now()
 );

@@ -14,7 +14,7 @@ export default function CheckoutPage() {
   const { items, total } = useCarrito();
   const [usuario, setUsuario] = useState<User | null>(null);
   const [cargandoSesion, setCargandoSesion] = useState(true);
-  const [enviando, setEnviando] = useState<"mercadopago" | "efectivo" | null>(
+  const [enviando, setEnviando] = useState<"transferencia" | "efectivo" | null>(
     null,
   );
   const [error, setError] = useState<string | null>(null);
@@ -92,7 +92,7 @@ export default function CheckoutPage() {
     );
   }
 
-  async function confirmarPedido(metodoPago: "mercadopago" | "efectivo") {
+  async function confirmarPedido(metodoPago: "transferencia" | "efectivo") {
     setError(null);
     if (!direccion.trim() || !telefono.trim()) {
       setError("Completá la dirección y el teléfono de contacto.");
@@ -147,9 +147,9 @@ export default function CheckoutPage() {
         return;
       }
 
-      // El carrito se vacía recién en /checkout/exito, por si la persona
-      // vuelve de Mercado Pago sin pagar.
-      window.location.href = datos.init_point;
+      // Transferencia: la pantalla de éxito muestra el alias y el botón
+      // para mandarnos el comprobante por WhatsApp.
+      router.push(`/checkout/exito?pedido=${datos.pedido_id}&transferencia=1`);
     } catch {
       ventanaWsp?.close();
       setError("Hubo un problema de conexión. Probá de nuevo.");
@@ -209,14 +209,18 @@ export default function CheckoutPage() {
           {error && <p className="text-sm text-ciruela">{error}</p>}
 
           <button
-            onClick={() => confirmarPedido("mercadopago")}
+            onClick={() => confirmarPedido("transferencia")}
             disabled={enviando !== null}
             className="mt-2 rounded-full bg-boton px-6 py-3 text-sm font-medium text-tinta hover:bg-boton-oscuro disabled:opacity-60"
           >
-            {enviando === "mercadopago"
-              ? "Redirigiendo a Mercado Pago…"
-              : "Pagar con Mercado Pago"}
+            {enviando === "transferencia"
+              ? "Confirmando pedido…"
+              : "Pagar por transferencia"}
           </button>
+          <p className="-mt-2 text-xs text-tinta/50">
+            Te mostramos el alias para transferir desde tu banco o billetera
+            virtual.
+          </p>
 
           <button
             onClick={() => confirmarPedido("efectivo")}

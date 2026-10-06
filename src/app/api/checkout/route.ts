@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { avisarPedidoPorWhatsapp } from "@/lib/avisos";
-import type { Producto } from "@/types";
+import type { MetodoPago, Producto } from "@/types";
 
 // Del navegador solo aceptamos qué productos y cuántos: el nombre y el
 // precio se sacan siempre de la base, así nadie puede pagar menos
@@ -34,8 +34,14 @@ export async function POST(request: NextRequest) {
   const direccion_entrega = texto(body.direccion_entrega, 300);
   const telefono_contacto = texto(body.telefono_contacto, 40);
   const notas = texto(body.notas, 500);
-  const metodo_pago: "mercadopago" | "efectivo" =
-    body.metodo_pago === "efectivo" ? "efectivo" : "mercadopago";
+  const metodo_pago: MetodoPago | null = ["transferencia", "efectivo", "mercadopago"].includes(
+    body.metodo_pago,
+  )
+    ? body.metodo_pago
+    : null;
+  if (!metodo_pago) {
+    return NextResponse.json({ error: "Elegí un método de pago." }, { status: 400 });
+  }
 
   if (!Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ error: "El carrito está vacío." }, { status: 400 });
@@ -144,9 +150,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Pago en efectivo: no hay nada que gestionar con Mercado Pago, el
-  // pedido queda creado y el cliente coordina la entrega por WhatsApp.
-  if (metodo_pago === "efectivo") {
+  // Transferencia y efectivo: no hay nada que gestionar con Mercado Pago.
+  // El pedido queda "pendiente de pago" hasta que la tienda lo confirme
+  // desde el panel, y el cliente nos escribe por WhatsApp.
+  if (metodo_pago === "transferencia" || metodo_pago === "efectivo") {
     await avisarPedidoPorWhatsapp(pedido.id);
     return NextResponse.json({ pedido_id: pedido.id });
   }
@@ -161,7 +168,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 3. Crear la preferencia de pago en Mercado Pago
+  // 3. Mercado Pago. Hoy el checkout no lo ofrece (por las comisiones),
+  // pero queda listo por si se vuelve a activar el botón.
   const client = new MercadoPagoConfig({
     accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
   });

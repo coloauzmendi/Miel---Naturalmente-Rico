@@ -189,7 +189,9 @@ async function armarVariables(
     pedido.id.slice(0, 8).toUpperCase(),
     pedido.metodo_pago === "mercadopago"
       ? "PAGADO con Mercado Pago"
-      : "A COBRAR en efectivo",
+      : pedido.metodo_pago === "transferencia"
+        ? "TRANSFERENCIA a confirmar (pedir comprobante)"
+        : "A COBRAR en efectivo",
     formatearPrecio(pedido.total),
     productos,
     cliente,

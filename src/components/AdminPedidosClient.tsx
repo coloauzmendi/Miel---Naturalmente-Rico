@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { EstadoPedido, Pedido, PedidoItem } from "@/types";
-import { codigoPedido, formatearFechaHora, formatearPrecio } from "@/lib/formato";
+import {
+  codigoPedido,
+  ETIQUETA_METODO_PAGO,
+  formatearFechaHora,
+  formatearPrecio,
+} from "@/lib/formato";
 
 const ESTADOS: EstadoPedido[] = [
   "pendiente_pago",
@@ -71,12 +76,12 @@ export default function AdminPedidosClient({
               </p>
               <span
                 className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                  pedido.metodo_pago === "efectivo"
-                    ? "bg-dorado/20 text-dorado-oscuro"
-                    : "bg-oliva/15 text-oliva"
+                  pedido.metodo_pago === "mercadopago"
+                    ? "bg-oliva/15 text-oliva"
+                    : "bg-dorado/20 text-dorado-oscuro"
                 }`}
               >
-                {pedido.metodo_pago === "efectivo" ? "Efectivo" : "Mercado Pago"}
+                {ETIQUETA_METODO_PAGO[pedido.metodo_pago] ?? pedido.metodo_pago}
               </span>
               {pedido.notas && <p className="text-sm text-tinta/50">Nota: {pedido.notas}</p>}
             </div>

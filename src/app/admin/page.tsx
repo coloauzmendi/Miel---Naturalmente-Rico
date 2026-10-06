@@ -16,14 +16,14 @@ export default async function AdminDashboard() {
     pedidos
       ?.filter((p) => p.estado !== "cancelado" && p.estado !== "pendiente_pago")
       .reduce((acc, p) => acc + p.total, 0) ?? 0;
-  // Por preparar: los pagados con MP y los de efectivo recién hechos (que
-  // quedan en "pendiente_pago" porque se cobran al entregar).
+  // Por preparar: los pagados y los de transferencia o efectivo recién
+  // hechos (quedan en "pendiente_pago" hasta que se confirma el cobro).
   const pedidosPendientes =
     pedidos?.filter(
       (p) =>
         p.estado === "pagado" ||
         p.estado === "en_preparacion" ||
-        (p.estado === "pendiente_pago" && p.metodo_pago === "efectivo"),
+        (p.estado === "pendiente_pago" && p.metodo_pago !== "mercadopago"),
     ).length ?? 0;
 
   return (

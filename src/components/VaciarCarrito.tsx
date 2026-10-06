@@ -3,9 +3,8 @@
 import { useEffect } from "react";
 import { useCarrito } from "@/components/CarritoContext";
 
-// Vacía el carrito al llegar a la página de éxito. Se hace acá y no antes
-// de ir a Mercado Pago para que, si la persona vuelve sin pagar, sus
-// productos sigan en el carrito.
+// Vacía el carrito al llegar a la página de éxito, una vez que el pedido
+// ya quedó creado.
 export default function VaciarCarrito() {
   const { vaciar } = useCarrito();
 

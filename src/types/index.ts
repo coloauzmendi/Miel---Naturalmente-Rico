@@ -44,6 +44,10 @@ export type EstadoPedido =
   | "entregado"
   | "cancelado";
 
+// "mercadopago" ya no se ofrece en el checkout, pero queda por los pedidos
+// viejos y por si se vuelve a activar.
+export type MetodoPago = "transferencia" | "efectivo" | "mercadopago";
+
 export interface Pedido {
   id: string;
   user_id: string;
@@ -54,7 +58,7 @@ export interface Pedido {
   notas: string | null;
   mp_preference_id: string | null;
   mp_payment_id: string | null;
-  metodo_pago: "mercadopago" | "efectivo";
+  metodo_pago: MetodoPago;
   created_at: string;
 }
 

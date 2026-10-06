@@ -1,3 +1,11 @@
+import type { MetodoPago } from "@/types";
+
+export const ETIQUETA_METODO_PAGO: Record<MetodoPago, string> = {
+  transferencia: "Transferencia",
+  efectivo: "Efectivo",
+  mercadopago: "Mercado Pago",
+};
+
 // Código corto del pedido, el mismo que va en los mensajes de WhatsApp.
 export function codigoPedido(id: string): string {
   return `#${id.slice(0, 8).toUpperCase()}`;
