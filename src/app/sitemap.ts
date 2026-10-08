@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { obtenerProductos } from "@/lib/productos";
 import { CATEGORIAS } from "@/lib/categorias";
 import { SITIO_URL } from "@/lib/sitio";
+import { urlProducto } from "@/lib/slug";
 
 /**
  * /sitemap.xml: la lista de páginas que Google tiene que conocer. Incluye
@@ -19,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     })),
     ...productos.map((producto) => ({
-      url: `${SITIO_URL}/productos/${producto.id}`,
+      url: `${SITIO_URL}${urlProducto(producto)}`,
       lastModified: producto.created_at,
       changeFrequency: "monthly" as const,
       priority: 0.7,

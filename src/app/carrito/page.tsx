@@ -5,6 +5,7 @@ import { useCarrito } from "@/components/CarritoContext";
 import { formatearPrecio } from "@/lib/formato";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { estiloEncuadre } from "@/lib/encuadre";
+import { urlProducto } from "@/lib/slug";
 
 export default function CarritoPage() {
   const { items, actualizarCantidad, quitar, total, avisoCarrito } = useCarrito();
@@ -63,7 +64,7 @@ export default function CarritoPage() {
 
             <div className="min-w-0 flex-1">
               <Link
-                href={`/productos/${producto.id}`}
+                href={urlProducto(producto)}
                 className="font-medium text-tinta"
               >
                 {producto.nombre}

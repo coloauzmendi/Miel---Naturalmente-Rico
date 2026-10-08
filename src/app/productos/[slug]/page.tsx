@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { obtenerProductoPorId } from "@/lib/productos";
+import { obtenerProducto } from "@/lib/productos";
+import { urlProducto } from "@/lib/slug";
 import { formatearPrecio } from "@/lib/formato";
 import { etiquetaCategoria } from "@/lib/categorias";
 import BotonAgregar from "@/components/BotonAgregar";
@@ -12,10 +13,10 @@ import { linkWhatsapp } from "@/lib/contacto";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  const producto = await obtenerProductoPorId(id);
+  const { slug } = await params;
+  const producto = await obtenerProducto(decodeURIComponent(slug));
   if (!producto) return {};
 
   const descripcion =
@@ -25,7 +26,7 @@ export async function generateMetadata({
   return {
     title: producto.nombre,
     description: descripcion,
-    alternates: { canonical: `/productos/${producto.id}` },
+    alternates: { canonical: urlProducto(producto) },
     openGraph: {
       title: producto.nombre,
       description: descripcion,
@@ -37,10 +38,10 @@ export async function generateMetadata({
 export default async function ProductoDetalle({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { id } = await params;
-  const producto = await obtenerProductoPorId(id);
+  const { slug } = await params;
+  const producto = await obtenerProducto(decodeURIComponent(slug));
 
   if (!producto) notFound();
 

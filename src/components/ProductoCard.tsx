@@ -9,6 +9,7 @@ import { useCarrito } from "@/components/CarritoContext";
 import { etiquetaCategoria } from "@/lib/categorias";
 import { Plus, Sun, Moon } from "lucide-react";
 import { estiloEncuadre } from "@/lib/encuadre";
+import { urlProducto } from "@/lib/slug";
 
 const DURACION_ROTACION = 3000;
 
@@ -36,7 +37,7 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-linea bg-crema-alta transition-shadow hover:shadow-[0_8px_24px_-8px_rgba(43,36,32,0.25)]">
       <Link
-        href={`/productos/${producto.id}`}
+        href={urlProducto(producto)}
         className="relative block aspect-[4/3] overflow-hidden bg-linea/60"
       >
         {imagenes.length > 0 ? (
@@ -80,7 +81,7 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
           {etiquetaCategoria(producto.categoria)}
         </span>
 
-        <Link href={`/productos/${producto.id}`}>
+        <Link href={urlProducto(producto)}>
           <h3 className="font-display text-lg leading-snug text-tinta">
             {producto.nombre}
           </h3>
@@ -107,7 +108,7 @@ export default function ProductoCard({ producto }: { producto: Producto }) {
             <button
               onClick={() => {
                 setAvisoSabor(true);
-                window.setTimeout(() => router.push(`/productos/${producto.id}`), 900);
+                window.setTimeout(() => router.push(urlProducto(producto)), 900);
               }}
               className="flex items-center gap-1 rounded-full bg-oliva px-3 py-2 text-center text-sm text-crema-alta transition-colors hover:bg-oliva-claro"
             >

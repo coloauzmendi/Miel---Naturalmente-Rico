@@ -110,8 +110,9 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
 
         if (normalizados.length > 0) {
           refrescarCarrito(normalizados).then((resultado) => {
-            if (!resultado || resultado.cambios.length === 0) return;
-            // Solo reemplazamos las líneas que venían guardadas: si mientras
+            if (!resultado) return;
+            // Siempre actualizamos las copias (así tienen la dirección y los
+            // datos al día). Solo reemplazamos las líneas que venían guardadas: si mientras
             // tanto la persona agregó algo nuevo, lo conservamos.
             setItems((actuales) => [
               ...resultado.items,
@@ -120,9 +121,11 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
                   !normalizados.some((n) => mismoItem(n, a.producto.id, a.sabor)),
               ),
             ]);
-            setAvisoCarrito(
-              `Actualizamos tu carrito: ${resultado.cambios.join(", ")}.`,
-            );
+            if (resultado.cambios.length > 0) {
+              setAvisoCarrito(
+                `Actualizamos tu carrito: ${resultado.cambios.join(", ")}.`,
+              );
+            }
           });
         }
       }

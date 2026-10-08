@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { limpiarEncuadres } from "@/lib/encuadre";
+import { slugUnico } from "@/lib/slug";
 
 async function requiereAdmin() {
   const supabase = await createClient();
@@ -30,9 +31,20 @@ export async function PUT(
 
   const body = await request.json();
   const imagenes: string[] = Array.isArray(body.imagenes) ? body.imagenes : [];
+
+  // El slug no cambia al renombrar (para no romper links). Solo se crea si
+  // el producto todavía no tenía uno.
+  const { data: actual } = await supabase
+    .from("productos")
+    .select("slug")
+    .eq("id", id)
+    .single();
+  const slug = actual?.slug || (await slugUnico(supabase, String(body.nombre ?? "")));
+
   const { data, error } = await supabase
     .from("productos")
     .update({
+      slug,
       nombre: body.nombre,
       descripcion: body.descripcion,
       precio: body.precio,

@@ -25,6 +25,9 @@ export interface Producto {
   // Cómo encuadrar cada foto, por URL. Las fotos sin encuadre se ven
   // centradas y sin zoom.
   encuadres?: Record<string, Encuadre> | null;
+  // Parte legible de la dirección (/productos/<slug>). Puede faltar en
+  // copias viejas guardadas en un carrito.
+  slug?: string | null;
   created_at?: string;
 }
 

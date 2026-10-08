@@ -19,16 +19,17 @@ export async function obtenerProductos(): Promise<Producto[]> {
   return data as Producto[];
 }
 
-// Con cache(), si la metadata y la página piden el mismo producto en la
-// misma carga, se consulta la base una sola vez.
-export const obtenerProductoPorId = cache(async function obtenerProductoPorId(
-  id: string,
+// Busca un producto por su slug ("croquetas-de-papa-y-mung"). Con
+// cache(), si la metadata y la página piden el mismo producto en la misma
+// carga, se consulta la base una sola vez.
+export const obtenerProducto = cache(async function obtenerProducto(
+  slug: string,
 ): Promise<Producto | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("productos")
     .select("*")
-    .eq("id", id)
+    .eq("slug", slug)
     .single();
 
   if (error || !data) return null;

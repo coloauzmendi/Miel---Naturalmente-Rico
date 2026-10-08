@@ -85,6 +85,9 @@ create table if not exists public.productos (
   sabores jsonb,
   -- Encuadre de cada foto, por URL: {"<url>": {"x": 40, "y": 65, "zoom": 1.3}}.
   encuadres jsonb,
+  -- Parte legible de la dirección: /productos/<slug>. Se genera al crear
+  -- el producto y no cambia al renombrarlo.
+  slug text unique,
   created_at timestamptz not null default now()
 );
 
